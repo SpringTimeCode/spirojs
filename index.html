@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <title>Spiro JS</title>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+  </head>
+  <body class="bg-body">
+    <div class="container bg-body p-3">
+      <div class="row">
+        <div class="col-6 border rounded-3 bg-light bg-gradient">
+          <div class="row p-3">
+            <div class="col-3 p-1">
+              <label for="multiplierRange" class="form-label">Loop Multiplier:</label>
+            </div>
+            <div class="col-9 p-1">
+              <input type="range" class="form-range" min="0" max="20" step="0.0005" id="multiplierRange">
+            </div>
+          </div>
+          <div class="row p-3">
+            <div class="col-3 p-1">
+              <label for="angleRange" class="form-label">Angle:</label>
+            </div>
+            <div class="col-9 p-1">
+              <input type="range" class="form-range" min="1" max="360" step="1" id="angleRange">
+            </div>
+          </div>
+          <div class="row p-3">
+            <div class="col-3 p-1">
+            </div>
+            <div class="col-9 p-1">
+              <div id="angleRangeValue" aria-hidden="true"></div><br>
+              <div id="multiplierRangeValue" aria-hidden="true"></div><br>
+              <div id="interationValue">Iteration: 0</div>
+            </div>
+          </div>
+          <div class="row p-3">
+            <div class="col-3 p-1">
+            </div>
+            <div class="col-9 p-1">
+              <button id="startButton" class="col-2 btn btn-outline-primary">Start</button>
+              <button id="stopButton" class="col-2 btn btn-outline-secondary">Stop</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-6 border rounded-3 bg-light bg-gradient">
+          <canvas id="canvas" width="700" height="700"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <script>
+
+      // Collect initial objects
+      const rangeInput = document.getElementById('multiplierRange');
+      const rangeOutput = document.getElementById('multiplierRangeValue');
+      const angleInput = document.getElementById('angleRange');
+      const angleOutput = document.getElementById('angleRangeValue');
+      const interationOutput = document.getElementById('interationValue');
+
+      // Set initial values
+      let loopInterval;
+      let isLoopRunning = false;
+      
+      // Set initial output value
+      rangeOutput.textContent = 'Loop Multiplier Value: ' + rangeInput.value;
+      angleOutput.textContent = 'Angle Value: ' + angleInput.value;
+
+      // Add listener
+      rangeInput.addEventListener('input', function() {
+        rangeOutput.textContent = 'Loop Multiplier Value: ' + this.value;
+        draw(this.value, angleInput.value);
+      });
+
+      // Add listener
+      angleInput.addEventListener('input', function() {
+        angleOutput.textContent = 'Angle Value: ' + this.value;
+        draw(rangeInput.value, this.value);
+      });
+
+      // Define draw function
+      function draw(dblMultiplier,dblAngleMax) {
+
+        const canvas = document.getElementById("canvas");
+        
+        if (canvas.getContext) {
+
+          const ctx = canvas.getContext("2d");
+          // ctx.strokeStyle = "blue";
+
+          ctx.clearRect(0, 0, 700, 700);
+
+          // dblMultiplier Values;
+          // 0 = full circle;
+          // 1 = one loop
+          // 2 = 4 loops
+          // 3 = 3 loops
+          // 4 = 8 loops
+          // etc
+
+          dblLineLength = 0.01;
+          x1 = 0;
+          y1 = 0;
+
+          for (let dblAngle = 0; dblAngle <= dblAngleMax; 
+            dblAngle = dblAngle + dblLineLength) {
+
+            dblRadius = 600 * Math.cos(dblMultiplier*dblAngle);
+            x2 = (((dblRadius * Math.sin(dblAngle))/Math.PI)*1.5) + 320;
+            y2 = ((dblRadius * Math.cos(dblAngle))/2) + 320;
+
+            if (x1 == 0) {
+              x1 = x2;
+              y1 = y2;
+            };
+      
+            ctx.beginPath();  
+            ctx.moveTo(x1,y1);
+            ctx.lineTo(x2,y2);
+            ctx.stroke();
+            ctx.closePath();
+
+            x1=x2;
+            y1=y2;
+
+          }
+
+        }
+      }
+
+      // Define actions when start button clicked
+      document.getElementById('startButton').addEventListener('click', () => {
+        if (!isLoopRunning) {
+          isLoopRunning = true;
+          let rangeInput = document.getElementById('multiplierRange');
+          let rangeOutput = document.getElementById('multiplierRangeValue');
+          let angleInput =  document.getElementById('angleRange');
+          let angleOutput =  document.getElementById('angleRangeValue');
+          let count = 0;
+          let dblMultiplier = parseFloat(rangeInput.value);
+          let dblIncrement = 0.0001;
+          let dblAngle = parseFloat(angleInput.value);
+          loopInterval = setInterval(() => {
+            interationOutput.textContent = `Iteration: ${count++}`;
+            dblMultiplier = dblMultiplier + dblIncrement;
+            if (dblMultiplier > 20) {dblMultiplier = 0};
+            dblMultiplierFormated = dblMultiplier.toFixed(4);
+            rangeInput.value = dblMultiplierFormated;
+            rangeOutput.textContent = 'Loop Multiplier Value: ' + dblMultiplierFormated;
+            draw(dblMultiplier,dblAngle);
+          }, 1);
+        }
+      });
+
+      // Define actions when stop button clicked
+      document.getElementById('stopButton').addEventListener('click', () => {
+        if (isLoopRunning) {
+          clearInterval(loopInterval);
+          isLoopRunning = false;
+          interationOutput.textContent = 'Iteration: Stopped';
+        }
+      });
+
+      // Original Commodore 64 code
+      // 1 graphic 2 : b = 0.1
+      // 10 c = 511 : d = 511
+      // 20 for a=0 to 1000 step b
+      // 30 r = 100 * cos (4*a)
+      // 40 x = (r * sin(a))/3.14
+      // 50 y = (r * cos(a))/2
+      // 60 get a$ : if a$ > "" then 110
+      // 70 x = x + 511 : y = y + 511
+      // 80 draw 1,c,d to x,y
+      // 90 d = y : c = x
+      // 100 next a
+      // 110 a = 1000
+      // 120 b = b + .1
+      // 130 scnclr
+      // 140 goto 10
+
+    </script>
+
+  </body>
+</html>
