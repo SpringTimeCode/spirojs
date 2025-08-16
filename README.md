@@ -1,1 +1,1 @@
-# Converted code from Commodore 64 basic originally created in 1982.  Creates graphs from circle equations using JavaScript canvas. Uses BootStrap 5 for formatting.
+# Converted code from Commodore 64 Basic with SuperExpander.  This code was originally created in 1982 to use trig circle functions to plot graphs.  Update to use Canvas for plotting.  
