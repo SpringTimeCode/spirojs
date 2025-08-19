@@ -48,8 +48,9 @@
             <div class="col-3 p-1">
             </div>
             <div class="col-9 p-1">
-              <button id="startButton" class="col-2 btn btn-outline-primary">Start</button>
-              <button id="stopButton" class="col-2 btn btn-outline-secondary">Stop</button>
+              <button id="forwardButton" class="col-3 btn btn-outline-primary">Forward</button>
+              <button id="backwardButton" class="col-3 btn btn-outline-primary">Backward</button>
+              <button id="stopButton" class="col-2 btn btn-outline-secondary active">Stop</button>
             </div>
           </div>
           <div class="row p-3">
@@ -80,6 +81,10 @@
       const lineLengthOutput = document.getElementById('lineLengthRangeValue');
 
       const interationOutput = document.getElementById('interationValue');
+
+      const btnForward = document.getElementById('forwardButton');
+      const btnBackward = document.getElementById('backwardButton');
+      const btnStop = document.getElementById('stopButton');
 
       // Set initial values
       let loopInterval;
@@ -157,8 +162,19 @@
         }
       }
 
-      // Define actions when start button clicked
-      document.getElementById('startButton').addEventListener('click', () => {
+      // Define actions when forward button clicked
+      document.getElementById('forwardButton').addEventListener('click', () => {
+
+        btnForward.classList.add('active');
+        btnBackward.classList.remove('active');
+        btnStop.classList.remove('active');
+
+        if (isLoopRunning) {
+          clearInterval(loopInterval);
+          isLoopRunning = false;
+          interationOutput.textContent = 'Iteration: Stopped';
+        }
+
         if (!isLoopRunning) {
           
           isLoopRunning = true;
@@ -191,8 +207,58 @@
         }
       });
 
+      // Define actions when backward button clicked
+      document.getElementById('backwardButton').addEventListener('click', () => {
+
+        btnForward.classList.remove('active');
+        btnBackward.classList.add('active');
+        btnStop.classList.remove('active');
+        
+        if (isLoopRunning) {
+          clearInterval(loopInterval);
+          isLoopRunning = false;
+          interationOutput.textContent = 'Iteration: Stopped';
+        }
+
+        if (!isLoopRunning) {
+          
+          isLoopRunning = true;
+          
+          let count = 0;
+          let dblIncrement = -0.0001;
+
+          let dblMultiplier = parseFloat(rangeInput.value);
+          let dblAngle = parseFloat(angleInput.value);
+          let dblLineLength = parseFloat(lineLengthInput.value);
+
+          loopInterval = setInterval(() => {
+
+            interationOutput.textContent = `Iteration: ${count++}`;
+            dblMultiplier = dblMultiplier + dblIncrement;
+
+            if (dblMultiplier <= 0) {dblMultiplier = 20};
+            
+            dblMultiplierFormated = dblMultiplier.toFixed(4);
+            rangeInput.value = dblMultiplierFormated;
+            rangeOutput.textContent = 'Loop Multiplier: ' + dblMultiplierFormated;
+
+            dblLineLengthFormated = dblLineLength.toFixed(2);
+            lineLengthInput.value = dblLineLengthFormated;
+            lineLengthOutput.textContent = 'Line Length: ' + dblLineLengthFormated;
+
+            draw(dblMultiplier, dblAngle, dblLineLength);
+
+          }, 1);
+        }
+      });
+
       // Define actions when stop button clicked
       document.getElementById('stopButton').addEventListener('click', () => {
+
+        btnForward.classList.remove('active');
+        btnBackward.classList.remove('active');
+        btnStop.classList.add('active');
+
         if (isLoopRunning) {
           clearInterval(loopInterval);
           isLoopRunning = false;
