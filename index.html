@@ -7,9 +7,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
   </head>
   <body class="bg-body">
+  
     <div class="container bg-body p-1">
-      <div class="row p-1">
-        <div class="col-lg-6">
+      <div class="row">
+        <div class="col-lg-6 p-1">
           <div class="card">
             <div class="card-header">
               Plot Settings
@@ -59,18 +60,16 @@
                 </div>
               </div>
               <div class="row p-3">
-                <div class="col-3 p-1">
-                </div>
-                <div class="col-9 p-1">
-                  <button id="forwardButton" class="col-3 btn btn-outline-primary">Forward</button>
-                  <button id="backwardButton" class="col-3 btn btn-outline-primary">Backward</button>
-                  <button id="stopButton" class="col-2 btn btn-outline-secondary active">Stop</button>
+                <div class="col-12 p-1 text-center">
+                  <button id="forwardButton" class="col-3 btn btn-outline-primary text-nowrap">Forward</button>
+                  <button id="backwardButton" class="col-3 btn btn-outline-primary text-nowrap">Backward</button>
+                  <button id="stopButton" class="col-3 btn btn-outline-secondary text-nowrap active">Stop</button>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div class="col-lg-6">
+        <div class="col-lg-6 p-1">
           <div class="card" style="min-width: 700px;">
             <div class="card-header">
               Plot Canvas
@@ -201,6 +200,7 @@
           isLoopRunning = false;
           interationOutput.textContent = 'Iteration: Stopped';
         }
+
       });
 
       // Cycle through plots
@@ -293,7 +293,8 @@
           }
 
         }
-      }
+
+      };
 
       // Original Commodore 64 Code
       // 1 graphic 2 : b = 0.1
