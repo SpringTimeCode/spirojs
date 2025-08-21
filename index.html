@@ -7,7 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
   </head>
   <body class="bg-body">
-  
+
     <div class="container bg-body p-1">
       <div class="row">
         <div class="col-lg-6 p-1">
@@ -70,12 +70,12 @@
           </div>
         </div>
         <div class="col-lg-6 p-1">
-          <div class="card" style="min-width: 700px;">
+          <div class="card">
             <div class="card-header">
               Plot Canvas
             </div>
-            <div class="card-body">
-              <canvas id="canvas" width="700" height="650"></canvas>
+            <div class="card-body" id="canvasDiv">
+              <canvas id="canvas" width="600" height="600"></canvas>
             </div>
           </div>
         </div>
@@ -102,6 +102,11 @@
       const btnForward = document.getElementById('forwardButton');
       const btnBackward = document.getElementById('backwardButton');
       const btnStop = document.getElementById('stopButton');
+
+      const parentDiv = document.getElementById('canvasDiv');
+      const canvas = document.getElementById("canvas");
+      canvas.width = parentDiv.offsetWidth;
+      canvas.height = parentDiv.offsetHeight;
 
       // Set initial values
       let loopInterval;
@@ -203,6 +208,15 @@
 
       });
 
+      // Add window resize listener
+      window.addEventListener('resize', function() {
+        canvas.width = parentDiv.offsetWidth;
+        canvas.height = parentDiv.offsetWidth * 0.95;
+        if (isLoopRunning) {
+          loopCycle();
+        }
+      });
+
       // Cycle through plots
       function loopCycle() {
 
@@ -258,13 +272,16 @@
       // Define draw function
       function draw(dblMultiplier, dblAngleMax, dblLineLength) {
 
-        const canvas = document.getElementById("canvas");
-        
         if (canvas.getContext) {
 
-          const ctx = canvas.getContext("2d");
+          const plotArea = canvas.getContext("2d");
+          const plotAreaWidth = canvas.width;
+          const plotAreaHeight = canvas.height;
 
-          ctx.clearRect(0, 0, 700, 700);
+          const radiusScale = plotAreaWidth * 0.9;
+          const plotAreaCenter = (plotAreaWidth/2) * 0.95;
+
+          plotArea.clearRect(0, 0, plotAreaWidth, plotAreaHeight);
 
           x1 = 0;
           y1 = 0;
@@ -272,20 +289,20 @@
           for (let dblAngle = dblLineLength; dblAngle <= dblAngleMax; 
             dblAngle = dblAngle + dblLineLength) {
 
-            dblRadius = 630 * Math.cos(dblMultiplier*dblAngle);
-            x2 = (((dblRadius * Math.sin(dblAngle))/Math.PI)*1.5) + 330;
-            y2 = ((dblRadius * Math.cos(dblAngle))/2) + 330;
+            dblRadius = radiusScale * Math.cos(dblMultiplier*dblAngle);
+            x2 = (((dblRadius * Math.sin(dblAngle))/Math.PI)*1.5) + plotAreaCenter;
+            y2 = ((dblRadius * Math.cos(dblAngle))/2) + plotAreaCenter;
 
             if (x1 == 0) {
               x1 = x2;
               y1 = y2;
             };
       
-            ctx.beginPath();  
-            ctx.moveTo(x1,y1);
-            ctx.lineTo(x2,y2);
-            ctx.stroke();
-            ctx.closePath();
+            plotArea.beginPath();  
+            plotArea.moveTo(x1,y1);
+            plotArea.lineTo(x2,y2);
+            plotArea.stroke();
+            plotArea.closePath();
 
             x1=x2;
             y1=y2;
