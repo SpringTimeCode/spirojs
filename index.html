@@ -172,24 +172,52 @@
       // Define actions when forward button clicked
       document.getElementById('forwardButton').addEventListener('click', () => {
 
-        btnForward.classList.add('active');
-        btnBackward.classList.remove('active');
-        btnStop.classList.remove('active');
+        if (isLoopRunning && loopDirection == "Forward") {
 
-        loopDirection = "Forward";
-        loopCycle();
+          btnForward.classList.remove('active');
+          btnBackward.classList.remove('active');
+          btnStop.classList.remove('active');
+
+          clearInterval(loopInterval);
+          isLoopRunning = false;
+          interationOutput.textContent = 'Iteration: Stopped';
+
+        } else {
+
+          btnForward.classList.add('active');
+          btnBackward.classList.remove('active');
+          btnStop.classList.remove('active');
+
+          loopDirection = "Forward";
+          loopCycle();
+
+        }
 
       });
 
       // Define actions when backward button clicked
       document.getElementById('backwardButton').addEventListener('click', () => {
 
-        btnForward.classList.remove('active');
-        btnBackward.classList.add('active');
-        btnStop.classList.remove('active');
+        if (isLoopRunning && loopDirection == "Backward") {
 
-        loopDirection = "Backward";
-        loopCycle();
+          btnForward.classList.remove('active');
+          btnBackward.classList.remove('active');
+          btnStop.classList.remove('active');
+
+          clearInterval(loopInterval);
+          isLoopRunning = false;
+          interationOutput.textContent = 'Iteration: Stopped';
+
+        } else {
+          
+          btnForward.classList.remove('active');
+          btnBackward.classList.add('active');
+          btnStop.classList.remove('active');
+
+          loopDirection = "Backward";
+          loopCycle();
+
+        }
 
       });
 
