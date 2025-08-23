@@ -9,7 +9,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SpiroJS - Animated Spiral Circle Graphs</title>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
+    <script src=" https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/js/all.min.js "></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href=" https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/fontawesome.min.css " rel="stylesheet">
   </head>
 
   <body class="bg-body">
@@ -67,9 +69,9 @@
               </div>
               <div class="row p-3">
                 <div class="col-12 p-1 text-center">
-                  <button id="forwardButton" class="col-3 btn btn-outline-primary text-nowrap">Forward</button>
-                  <button id="backwardButton" class="col-3 btn btn-outline-primary text-nowrap">Backward</button>
-                  <button id="stopButton" class="col-3 btn btn-outline-secondary text-nowrap active">Stop</button>
+                  <button id="backwardButton" class="col-3 btn btn-outline-primary text-nowrap"<span><i class="fa-classic fa-solid fa-caret-left"></i></span>Backward</button>
+                  <button id="forwardButton" class="col-3 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-caret-right"></i></span>Forward</button>
+                  <button id="stopButton" class="col-3 btn btn-outline-primary text-nowrap active"><span><i class="fa-classic fa-solid fa-stop"></i></span>Stop</button>
                 </div>
               </div>
             </div>
@@ -238,7 +240,7 @@
 
           btnForward.classList.remove('active');
           btnBackward.classList.remove('active');
-          btnStop.classList.remove('active');
+          btnStop.classList.add('active');
 
           clearInterval(loopInterval);
           isLoopRunning = false;
@@ -264,7 +266,7 @@
 
           btnForward.classList.remove('active');
           btnBackward.classList.remove('active');
-          btnStop.classList.remove('active');
+          btnStop.classList.add('active');
 
           clearInterval(loopInterval);
           isLoopRunning = false;
@@ -371,18 +373,6 @@
           }, dblPlotSpeed);
 
         }
-
-      };
-
-      // Draw initial plot
-      function initialPlot() {
-
-          let dblMultiplier = parseFloat(rangeInput.value);
-          let dblAngle = parseFloat(angleInput.value);
-          let dblLineLength = parseFloat(lineLengthInput.value);
-          let dblPlotSpeed = 20 - parseFloat(plotSpeedInput.value);
-
-          draw(dblMultiplier, dblAngle, dblLineLength);
 
       };
 
