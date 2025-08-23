@@ -116,14 +116,58 @@
       let loopInterval;
       let isLoopRunning = false;
       let loopDirection = "Forward";
-      
-      // Set initial output value
+
+      // Check if query string in URL
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
+
+      // Set initial loop multiplier value
+      valueMultiplier = 0;
+      if (urlParams.has('Multiplier')) {
+        const tempValue = urlParams.get('Multiplier');
+        if (!isNaN(tempValue)) {
+          if (tempValue >= 0 &&  tempValue <=20) {valueMultiplier = tempValue}
+        } 
+      }
+      rangeInput.value = valueMultiplier;
+
+      // Set initial saturation level value
+      valueSaturation = 0;
+      if (urlParams.has('Saturation')) {
+        const tempValue = urlParams.get('Saturation');
+        if (!isNaN(tempValue)) {
+          if (tempValue >= 1 &&  tempValue <=360) {valueSaturation = tempValue}
+        } 
+      }
+      angleInput.value = valueSaturation;
+
+      // Set initial line length value
+      valueLength = 0;
+      if (urlParams.has('LineLength')) {
+        const tempValue = urlParams.get('LineLength');
+        if (!isNaN(tempValue)) {
+          if (tempValue >= 0.01 &&  tempValue <=3) {valueLength = tempValue}
+        } 
+      }
+      lineLengthInput.value = valueLength;
+
+      // Set initial plot speed value
+      valueSpeed = 0;
+      if (urlParams.has('PlotSpeed')) {
+        const tempValue = urlParams.get('PlotSpeed');
+        if (!isNaN(tempValue)) {
+          if (tempValue >= 0 &&  tempValue <=20) {valueSpeed = tempValue}
+        } 
+      }
+      plotSpeedInput.value = valueSpeed;
+
+      // Update selected settings
       rangeOutput.textContent = 'Loop Multiplier: ' + rangeInput.value;
       angleOutput.textContent = 'Saturation Level: ' + angleInput.value;
       lineLengthOutput.textContent = 'Line Length: ' + lineLengthInput.value;
       plotSpeedOutput.textContent = 'Plot Speed: ' + plotSpeedInput.value;
 
-      // Add range listener
+      // Add loop multiplier listener
       rangeInput.addEventListener('input', function() {
         rangeOutput.textContent = 'Loop Multiplier: ' + this.value;
         if (isLoopRunning) {
@@ -137,7 +181,7 @@
         }
       });
 
-      // Add angle / saturation listener
+      // Add saturation level listener
       angleInput.addEventListener('input', function() {
         angleOutput.textContent = 'Saturation Level: ' + this.value;
         if (isLoopRunning) {
@@ -249,7 +293,19 @@
         }
       });
 
-      // Cycle through plots
+      // Draw initial chart on page load
+      document.addEventListener('DOMContentLoaded', function() {
+
+        let dblMultiplier = parseFloat(rangeInput.value);
+        let dblAngle = parseFloat(angleInput.value);
+        let dblLineLength = parseFloat(lineLengthInput.value);
+        let dblPlotSpeed = 20 - parseFloat(plotSpeedInput.value);
+
+        draw(dblMultiplier, dblAngle, dblLineLength);
+        
+      });
+
+      // Define function to cycle through chart plots
       function loopCycle() {
 
         if (isLoopRunning) {
@@ -301,7 +357,19 @@
 
       };
 
-      // Define draw function
+      // Draw initial plot
+      function initialPlot() {
+
+          let dblMultiplier = parseFloat(rangeInput.value);
+          let dblAngle = parseFloat(angleInput.value);
+          let dblLineLength = parseFloat(lineLengthInput.value);
+          let dblPlotSpeed = 20 - parseFloat(plotSpeedInput.value);
+
+          draw(dblMultiplier, dblAngle, dblLineLength);
+
+      };
+
+      // Define function to draw a chart
       function draw(dblMultiplier, dblAngleMax, dblLineLength) {
 
         if (canvas.getContext) {
@@ -344,6 +412,8 @@
         }
 
       };
+
+
 
       // Original Commodore 64 Code from 1982 (required SuperExpander Cartridge)
       // 1 graphic 2 : b = 0.1
