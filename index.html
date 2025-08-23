@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en-US">
+
   <head>
     <meta charset="utf-8" />
     <meta name="description" content="Generates spiral graph plots.">
@@ -10,6 +11,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
   </head>
+
   <body class="bg-body">
 
     <div class="container bg-body p-1">
@@ -122,7 +124,7 @@
       const urlParams = new URLSearchParams(queryString);
 
       // Set initial loop multiplier value
-      valueMultiplier = 0;
+      valueMultiplier = 1.3;
       if (urlParams.has('Multiplier')) {
         const tempValue = urlParams.get('Multiplier');
         if (!isNaN(tempValue)) {
@@ -132,7 +134,7 @@
       rangeInput.value = valueMultiplier;
 
       // Set initial saturation level value
-      valueSaturation = 0;
+      valueSaturation = 50;
       if (urlParams.has('Saturation')) {
         const tempValue = urlParams.get('Saturation');
         if (!isNaN(tempValue)) {
@@ -142,7 +144,7 @@
       angleInput.value = valueSaturation;
 
       // Set initial line length value
-      valueLength = 0;
+      valueLength = 0.15;
       if (urlParams.has('LineLength')) {
         const tempValue = urlParams.get('LineLength');
         if (!isNaN(tempValue)) {
@@ -152,7 +154,7 @@
       lineLengthInput.value = valueLength;
 
       // Set initial plot speed value
-      valueSpeed = 0;
+      valueSpeed = 15;
       if (urlParams.has('PlotSpeed')) {
         const tempValue = urlParams.get('PlotSpeed');
         if (!isNaN(tempValue)) {
@@ -169,7 +171,9 @@
 
       // Add loop multiplier listener
       rangeInput.addEventListener('input', function() {
+
         rangeOutput.textContent = 'Loop Multiplier: ' + this.value;
+
         if (isLoopRunning) {
           loopCycle();
         } else {
@@ -179,11 +183,14 @@
           let dblPlotSpeed = 20 - parseFloat(plotSpeedInput.value);
           draw(dblMultiplier, dblAngle, dblLineLength);
         }
+
       });
 
       // Add saturation level listener
       angleInput.addEventListener('input', function() {
+
         angleOutput.textContent = 'Saturation Level: ' + this.value;
+
         if (isLoopRunning) {
           loopCycle();
         } else {
@@ -193,11 +200,14 @@
           let dblPlotSpeed = 20 - parseFloat(plotSpeedInput.value);
           draw(dblMultiplier, dblAngle, dblLineLength);
         }
+
       });
 
       // Add line length listener
       lineLengthInput.addEventListener('input', function() {
+
         lineLengthOutput.textContent = 'Line Length: ' + this.value;
+
         if (isLoopRunning) {
           loopCycle();
         } else {
@@ -207,14 +217,18 @@
           let dblPlotSpeed = 20 - parseFloat(plotSpeedInput.value);
           draw(dblMultiplier, dblAngle, dblLineLength);
         }
+
       });
 
       // Add plot speed listener
       plotSpeedInput.addEventListener('input', function() {
+
         plotSpeedOutput.textContent = 'Plot Speed: ' + this.value;
+
         if (isLoopRunning) {
           loopCycle();
         }
+
       });
 
       // Define actions when forward button clicked
@@ -286,11 +300,14 @@
 
       // Add window resize listener
       window.addEventListener('resize', function() {
+
         canvas.width = parentDiv.offsetWidth;
         canvas.height = parentDiv.offsetWidth * 0.95;
+
         if (isLoopRunning) {
           loopCycle();
         }
+
       });
 
       // Draw initial chart on page load
@@ -302,7 +319,7 @@
         let dblPlotSpeed = 20 - parseFloat(plotSpeedInput.value);
 
         draw(dblMultiplier, dblAngle, dblLineLength);
-        
+
       });
 
       // Define function to cycle through chart plots
@@ -412,8 +429,6 @@
         }
 
       };
-
-
 
       // Original Commodore 64 Code from 1982 (required SuperExpander Cartridge)
       // 1 graphic 2 : b = 0.1
