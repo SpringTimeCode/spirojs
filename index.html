@@ -29,7 +29,7 @@
                   <label for="multiplierRange" class="form-label">Loop Multiplier:</label>
                 </div>
                 <div class="col-9 p-1">
-                  <input type="range" class="form-range" min="0" max="20" step="0.0005" id="multiplierRange">
+                  <input type="range" class="form-range" min="0" max="20" step="0.0001" id="multiplierRange">
                   <span id="multiplierRangeValue" aria-hidden="true"></span>
                 </div>
               </div>
@@ -61,16 +61,9 @@
                 </div>
               </div>
               <div class="row p-3">
-                <div class="col-3 p-1">
-                </div>
-                <div class="col-9 p-1">
-                  <div id="interationValue">Iteration: 0</div>
-                </div>
-              </div>
-              <div class="row p-3">
                 <div class="col-12 p-1 text-center">
-                  <button id="backwardButton" class="col-3 btn btn-outline-primary text-nowrap"<span><i class="fa-classic fa-solid fa-caret-left"></i></span>Backward</button>
-                  <button id="forwardButton" class="col-3 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-caret-right"></i></span>Forward</button>
+                  <button id="backwardButton" class="col-3 btn btn-outline-primary text-nowrap"<span><i class="fa-classic fa-solid fa-backward"></i></span>Backward</button>
+                  <button id="forwardButton" class="col-3 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-forward"></i></span>Forward</button>
                   <button id="stopButton" class="col-3 btn btn-outline-primary text-nowrap active"><span><i class="fa-classic fa-solid fa-stop"></i></span>Stop</button>
                 </div>
               </div>
@@ -105,14 +98,14 @@
       const plotSpeedInput = document.getElementById('plotSpeedRange');
       const plotSpeedOutput = document.getElementById('plotSpeedRangeValue');
 
-      const interationOutput = document.getElementById('interationValue');
-
       const btnForward = document.getElementById('forwardButton');
       const btnBackward = document.getElementById('backwardButton');
       const btnStop = document.getElementById('stopButton');
 
       const parentDiv = document.getElementById('canvasDiv');
       const canvas = document.getElementById("canvas");
+
+      // Set initial canvas dimentions
       canvas.width = parentDiv.offsetWidth;
       canvas.height = parentDiv.offsetHeight;
 
@@ -126,56 +119,54 @@
       const urlParams = new URLSearchParams(queryString);
 
       // Set initial loop multiplier value
-      valueMultiplier = 1.3;
+      dblMultiplier = 1.3;
       if (urlParams.has('Multiplier')) {
-        const tempValue = urlParams.get('Multiplier');
+        let tempValue = urlParams.get('Multiplier');
         if (!isNaN(tempValue)) {
-          if (tempValue >= 0 &&  tempValue <=20) {valueMultiplier = tempValue}
+          if (tempValue >= 0 &&  tempValue <=20) {dblMultiplier = tempValue}
         } 
       }
-      rangeInput.value = valueMultiplier;
+      dblMultiplierFormated = parseFloat(dblMultiplier).toFixed(4);
+      rangeInput.value = dblMultiplier;
+      rangeOutput.textContent = 'Loop Multiplier: ' + dblMultiplierFormated;
 
       // Set initial saturation level value
-      valueSaturation = 50;
+      dblAngle = 50;
       if (urlParams.has('Saturation')) {
-        const tempValue = urlParams.get('Saturation');
+        let tempValue = urlParams.get('Saturation');
         if (!isNaN(tempValue)) {
-          if (tempValue >= 1 &&  tempValue <=360) {valueSaturation = tempValue}
+          if (tempValue >= 1 &&  tempValue <=360) {dblAngle = parseFloat(tempValue)}
         } 
       }
-      angleInput.value = valueSaturation;
+      angleInput.value = dblAngle;
+      angleOutput.textContent = 'Saturation Level: ' + angleInput.value;
 
       // Set initial line length value
-      valueLength = 0.15;
+      dblLineLength = 0.15;
       if (urlParams.has('LineLength')) {
-        const tempValue = urlParams.get('LineLength');
+        let tempValue = urlParams.get('LineLength');
         if (!isNaN(tempValue)) {
-          if (tempValue >= 0.01 &&  tempValue <=3) {valueLength = tempValue}
+          if (tempValue >= 0.01 &&  tempValue <=3) {dblLineLength = parseFloat(tempValue)}
         } 
       }
-      lineLengthInput.value = valueLength;
+      dblLineLengthFormated = parseFloat(dblLineLength).toFixed(2);
+      lineLengthInput.value = dblLineLengthFormated;
+      lineLengthOutput.textContent = 'Line Length: ' + dblLineLengthFormated;
 
       // Set initial plot speed value
-      valueSpeed = 15;
+      dblPlotSpeed = 15;
       if (urlParams.has('PlotSpeed')) {
-        const tempValue = urlParams.get('PlotSpeed');
+        let tempValue = urlParams.get('PlotSpeed');
         if (!isNaN(tempValue)) {
-          if (tempValue >= 0 &&  tempValue <=20) {valueSpeed = tempValue}
+          if (tempValue >= 0 &&  tempValue <=20) {dblPlotSpeed = parseFloat(tempValue)}
         } 
       }
-      plotSpeedInput.value = valueSpeed;
-
-      // Update selected settings
-      rangeOutput.textContent = 'Loop Multiplier: ' + rangeInput.value;
-      angleOutput.textContent = 'Saturation Level: ' + angleInput.value;
-      lineLengthOutput.textContent = 'Line Length: ' + lineLengthInput.value;
+      plotSpeedInput.value = dblPlotSpeed;
       plotSpeedOutput.textContent = 'Plot Speed: ' + plotSpeedInput.value;
 
       // Add loop multiplier listener
       rangeInput.addEventListener('input', function() {
-
-        rangeOutput.textContent = 'Loop Multiplier: ' + this.value;
-
+        rangeOutput.textContent = 'Loop Multiplier: ' + parseFloat(this.value).toFixed(4);
         if (isLoopRunning) {
           loopCycle();
         } else {
@@ -185,14 +176,11 @@
           let dblPlotSpeed = 20 - parseFloat(plotSpeedInput.value);
           draw(dblMultiplier, dblAngle, dblLineLength);
         }
-
       });
 
       // Add saturation level listener
       angleInput.addEventListener('input', function() {
-
         angleOutput.textContent = 'Saturation Level: ' + this.value;
-
         if (isLoopRunning) {
           loopCycle();
         } else {
@@ -202,14 +190,11 @@
           let dblPlotSpeed = 20 - parseFloat(plotSpeedInput.value);
           draw(dblMultiplier, dblAngle, dblLineLength);
         }
-
       });
 
       // Add line length listener
       lineLengthInput.addEventListener('input', function() {
-
-        lineLengthOutput.textContent = 'Line Length: ' + this.value;
-
+        lineLengthOutput.textContent = 'Line Length: ' + parseFloat(this.value).toFixed(2);
         if (isLoopRunning) {
           loopCycle();
         } else {
@@ -219,118 +204,87 @@
           let dblPlotSpeed = 20 - parseFloat(plotSpeedInput.value);
           draw(dblMultiplier, dblAngle, dblLineLength);
         }
-
       });
 
       // Add plot speed listener
       plotSpeedInput.addEventListener('input', function() {
-
         plotSpeedOutput.textContent = 'Plot Speed: ' + this.value;
-
         if (isLoopRunning) {
           loopCycle();
         }
-
       });
 
       // Define actions when forward button clicked
       document.getElementById('forwardButton').addEventListener('click', () => {
-
         if (isLoopRunning && loopDirection == "Forward") {
-
           btnForward.classList.remove('active');
           btnBackward.classList.remove('active');
           btnStop.classList.add('active');
-
           clearInterval(loopInterval);
           isLoopRunning = false;
-          interationOutput.textContent = 'Iteration: Stopped';
-
         } else {
-
           btnForward.classList.add('active');
           btnBackward.classList.remove('active');
           btnStop.classList.remove('active');
-
           loopDirection = "Forward";
           loopCycle();
-
         }
-
       });
 
       // Define actions when backward button clicked
       document.getElementById('backwardButton').addEventListener('click', () => {
-
         if (isLoopRunning && loopDirection == "Backward") {
-
           btnForward.classList.remove('active');
           btnBackward.classList.remove('active');
           btnStop.classList.add('active');
-
           clearInterval(loopInterval);
           isLoopRunning = false;
-          interationOutput.textContent = 'Iteration: Stopped';
-
-        } else {
-          
+        } else {      
           btnForward.classList.remove('active');
           btnBackward.classList.add('active');
           btnStop.classList.remove('active');
-
           loopDirection = "Backward";
           loopCycle();
-
         }
-
       });
 
       // Define actions when stop button clicked
       document.getElementById('stopButton').addEventListener('click', () => {
-
         btnForward.classList.remove('active');
         btnBackward.classList.remove('active');
         btnStop.classList.add('active');
-
         if (isLoopRunning) {
           clearInterval(loopInterval);
           isLoopRunning = false;
-          interationOutput.textContent = 'Iteration: Stopped';
         }
-
       });
 
       // Add window resize listener
       window.addEventListener('resize', function() {
-
         canvas.width = parentDiv.offsetWidth;
         canvas.height = parentDiv.offsetWidth * 0.95;
-
         if (isLoopRunning) {
           loopCycle();
         }
-
       });
 
       // Draw initial chart on page load
       document.addEventListener('DOMContentLoaded', function() {
-
         let dblMultiplier = parseFloat(rangeInput.value);
         let dblAngle = parseFloat(angleInput.value);
         let dblLineLength = parseFloat(lineLengthInput.value);
         let dblPlotSpeed = 20 - parseFloat(plotSpeedInput.value);
-
         draw(dblMultiplier, dblAngle, dblLineLength);
-
       });
 
       // Define function to cycle through chart plots
       function loopCycle() {
 
         if (isLoopRunning) {
+
           clearInterval(loopInterval);
           isLoopRunning = false;
-          interationOutput.textContent = 'Iteration: Stopped';
+
         }
 
         if (!isLoopRunning) {
@@ -351,7 +305,6 @@
 
           loopInterval = setInterval(() => {
 
-            interationOutput.textContent = `Iteration: ${count++}`;
             dblMultiplier = dblMultiplier + dblIncrement;
 
             if (loopDirection == 'Forward') { 
@@ -363,10 +316,6 @@
             dblMultiplierFormated = dblMultiplier.toFixed(4);
             rangeInput.value = dblMultiplierFormated;
             rangeOutput.textContent = 'Loop Multiplier: ' + dblMultiplierFormated;
-
-            dblLineLengthFormated = dblLineLength.toFixed(2);
-            lineLengthInput.value = dblLineLengthFormated;
-            lineLengthOutput.textContent = 'Line Length: ' + dblLineLengthFormated;
 
             draw(dblMultiplier, dblAngle, dblLineLength);
 
