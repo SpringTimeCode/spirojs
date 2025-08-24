@@ -62,9 +62,10 @@
               </div>
               <div class="row p-3">
                 <div class="col-12 p-1 text-center">
-                  <button id="backwardButton" class="col-3 btn btn-outline-primary text-nowrap"<span><i class="fa-classic fa-solid fa-backward"></i></span>Backward</button>
+                  <button id="backwardButton" class="col-3 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-backward"></i></span>Backward</button>
                   <button id="forwardButton" class="col-3 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-forward"></i></span>Forward</button>
                   <button id="stopButton" class="col-3 btn btn-outline-primary text-nowrap active"><span><i class="fa-classic fa-solid fa-stop"></i></span>Stop</button>
+                  <button id="shareButton" class="col-1 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-share"></i></span></button>
                 </div>
               </div>
             </div>
@@ -101,6 +102,7 @@
       const btnForward = document.getElementById('forwardButton');
       const btnBackward = document.getElementById('backwardButton');
       const btnStop = document.getElementById('stopButton');
+      const btnShare = document.getElementById('shareButton');
 
       const parentDiv = document.getElementById('canvasDiv');
       const canvas = document.getElementById("canvas");
@@ -175,7 +177,6 @@
           let dblMultiplier = parseFloat(this.value);
           let dblAngle = parseFloat(angleInput.value);
           let dblLineLength = parseFloat(lineLengthInput.value);
-          let dblPlotSpeed = 20 - parseFloat(plotSpeedInput.value);
           draw(dblMultiplier, dblAngle, dblLineLength);
         }
       });
@@ -189,7 +190,6 @@
           let dblMultiplier = parseFloat(rangeInput.value);
           let dblAngle = parseFloat(this.value);
           let dblLineLength = parseFloat(lineLengthInput.value);
-          let dblPlotSpeed = 20 - parseFloat(plotSpeedInput.value);
           draw(dblMultiplier, dblAngle, dblLineLength);
         }
       });
@@ -203,7 +203,6 @@
           let dblMultiplier = parseFloat(rangeInput.value);
           let dblAngle = parseFloat(angleInput.value);
           let dblLineLength = parseFloat(this.value);
-          let dblPlotSpeed = 20 - parseFloat(plotSpeedInput.value);
           draw(dblMultiplier, dblAngle, dblLineLength);
         }
       });
@@ -217,7 +216,7 @@
       });
 
       // Define actions when forward button clicked
-      document.getElementById('forwardButton').addEventListener('click', () => {
+      btnForward.addEventListener('click', () => {
         if (isLoopRunning && loopDirection == "Forward") {
           btnForward.classList.remove('active');
           btnBackward.classList.remove('active');
@@ -234,7 +233,7 @@
       });
 
       // Define actions when backward button clicked
-      document.getElementById('backwardButton').addEventListener('click', () => {
+      btnBackward.addEventListener('click', () => {
         if (isLoopRunning && loopDirection == "Backward") {
           btnForward.classList.remove('active');
           btnBackward.classList.remove('active');
@@ -251,7 +250,7 @@
       });
 
       // Define actions when stop button clicked
-      document.getElementById('stopButton').addEventListener('click', () => {
+      btnStop.addEventListener('click', () => {
         btnForward.classList.remove('active');
         btnBackward.classList.remove('active');
         btnStop.classList.add('active');
@@ -259,6 +258,37 @@
           clearInterval(loopInterval);
           isLoopRunning = false;
         }
+      });
+
+      // Define actions when stop button clicked
+      btnShare.addEventListener('click', async () => {
+
+        let dblMultiplier = parseFloat(rangeInput.value);
+        let dblAngle = parseFloat(angleInput.value);
+        let dblLineLength = parseFloat(lineLengthInput.value);
+        let dblPlotSpeed = parseFloat(plotSpeedInput.value);
+
+        shareURL = siteBaseURL + "?Multiplier=" + dblMultiplier +
+          "Saturation=" + dblAngle + "&LineLength=" + dblLineLength +
+          "&PlotSpeed=" + dblPlotSpeed;
+
+        const shareData = {
+          title: 'SpiroJS - Animated Spiral Circle Graphs',
+          text: 'Check out this amazing site!',
+          url: shareURL
+        };
+
+        try {
+          if (navigator.share) {
+            await navigator.share(shareData);
+          } else {
+            // Fallback for browsers that don't support the API
+            alert('Web Share API is not supported on this browser.');
+          }
+        } catch (err) {
+          console.error(`Error: ${err}`);
+        }
+
       });
 
       // Add window resize listener
@@ -275,7 +305,6 @@
         let dblMultiplier = parseFloat(rangeInput.value);
         let dblAngle = parseFloat(angleInput.value);
         let dblLineLength = parseFloat(lineLengthInput.value);
-        let dblPlotSpeed = 20 - parseFloat(plotSpeedInput.value);
         draw(dblMultiplier, dblAngle, dblLineLength);
       });
 
