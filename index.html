@@ -102,7 +102,7 @@
       const btnForward = document.getElementById('forwardButton');
       const btnBackward = document.getElementById('backwardButton');
       const btnStop = document.getElementById('stopButton');
-      const btnShare = document.getElementById('shareButton');
+      // const btnShare = document.getElementById('shareButton');
 
       const parentDiv = document.getElementById('canvasDiv');
       const canvas = document.getElementById("canvas");
@@ -261,35 +261,35 @@
       });
 
       // Define actions when stop button clicked
-      btnShare.addEventListener('click', async () => {
+      // btnShare.addEventListener('click', async () => {
 
-        let dblMultiplier = parseFloat(rangeInput.value);
-        let dblAngle = parseFloat(angleInput.value);
-        let dblLineLength = parseFloat(lineLengthInput.value);
-        let dblPlotSpeed = parseFloat(plotSpeedInput.value);
+      //   let dblMultiplier = parseFloat(rangeInput.value);
+      //   let dblAngle = parseFloat(angleInput.value);
+      //   let dblLineLength = parseFloat(lineLengthInput.value);
+      //   let dblPlotSpeed = parseFloat(plotSpeedInput.value);
 
-        shareURL = siteBaseURL + "?Multiplier=" + dblMultiplier +
-          "Saturation=" + dblAngle + "&LineLength=" + dblLineLength +
-          "&PlotSpeed=" + dblPlotSpeed;
+      //   shareURL = siteBaseURL + "?Multiplier=" + dblMultiplier +
+      //     "Saturation=" + dblAngle + "&LineLength=" + dblLineLength +
+      //     "&PlotSpeed=" + dblPlotSpeed;
 
-        const shareData = {
-          title: 'SpiroJS - Animated Spiral Circle Graphs',
-          text: 'Check out this amazing site!',
-          url: shareURL
-        };
+      //   const shareData = {
+      //     title: 'SpiroJS - Animated Spiral Circle Graphs',
+      //     text: 'Check out this amazing site!',
+      //     url: shareURL
+      //   };
 
-        try {
-          if (navigator.share) {
-            await navigator.share(shareData);
-          } else {
-            // Fallback for browsers that don't support the API
-            alert('Web Share API is not supported on this browser.');
-          }
-        } catch (err) {
-          console.error(`Error: ${err}`);
-        }
+      //   try {
+      //     if (navigator.share) {
+      //       await navigator.share(shareData);
+      //     } else {
+      //       // Fallback for browsers that don't support the API
+      //       alert('Web Share API is not supported on this browser.');
+      //     }
+      //   } catch (err) {
+      //     console.error(`Error: ${err}`);
+      //   }
 
-      });
+      // });
 
       // Add window resize listener
       window.addEventListener('resize', function() {
