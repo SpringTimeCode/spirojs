@@ -66,6 +66,7 @@
                   <button id="forwardButton" class="col-3 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-forward"></i></span>Forward</button>
                   <button id="stopButton" class="col-3 btn btn-outline-primary text-nowrap active"><span><i class="fa-classic fa-solid fa-stop"></i></span>Stop</button>
                   <!-- <button id="shareButton" class="col-1 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-share"></i></span></button> -->
+                  <button id="copyButton" class="col-1 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-copy"></i></span></button>
                 </div>
               </div>
             </div>
@@ -103,6 +104,7 @@
       const btnBackward = document.getElementById('backwardButton');
       const btnStop = document.getElementById('stopButton');
       // const btnShare = document.getElementById('shareButton');
+      const btnCopy = document.getElementById('copyButton');
 
       const parentDiv = document.getElementById('canvasDiv');
       const canvas = document.getElementById("canvas");
@@ -290,6 +292,28 @@
       //   }
 
       // });
+
+
+      // Define actions when stop button clicked
+      btnCopy.addEventListener('click', async () => {
+
+        let dblMultiplier = parseFloat(rangeInput.value);
+        let dblAngle = parseFloat(angleInput.value);
+        let dblLineLength = parseFloat(lineLengthInput.value);
+        let dblPlotSpeed = parseFloat(plotSpeedInput.value);
+
+        shareURL = siteBaseURL + "?Multiplier=" + dblMultiplier +
+          "Saturation=" + dblAngle + "&LineLength=" + dblLineLength +
+          "&PlotSpeed=" + dblPlotSpeed;
+
+        try {
+          await navigator.clipboard.writeText(shareURL);
+          console.log('Text successfully copied to clipboard!');
+        } catch (err) {
+          console.error('Failed to copy text: ', err);
+        }
+      });
+
 
       // Add window resize listener
       window.addEventListener('resize', function() {
