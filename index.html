@@ -309,7 +309,6 @@
 
       // });
 
-
       // Define actions when stop button clicked
       btnCopy.addEventListener('click', async () => {
 
@@ -319,7 +318,7 @@
         let dblPlotSpeed = parseFloat(plotSpeedInput.value);
 
         shareURL = siteBaseURL + "?Multiplier=" + dblMultiplier +
-          "Saturation=" + dblAngle + "&LineLength=" + dblLineLength +
+          "&Saturation=" + dblAngle + "&LineLength=" + dblLineLength +
           "&PlotSpeed=" + dblPlotSpeed;
 
         shareDescription = "URL and settings copied to the clipboard:\n" +
@@ -339,7 +338,6 @@
         copyToast.show();
 
       });
-
 
       // Add window resize listener
       window.addEventListener('resize', function() {
