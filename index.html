@@ -64,7 +64,7 @@
                 <div class="col-12 p-1 text-center">
                   <button id="backwardButton" class="col-3 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-backward"></i></span>Backward</button>
                   <button id="forwardButton" class="col-3 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-forward"></i></span>Forward</button>
-                  <button id="stopButton" class="col-3 btn btn-outline-primary text-nowrap active"><span><i class="fa-classic fa-solid fa-stop"></i></span>Stop</button>
+                  <button id="stopButton" class="col-3 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-stop"></i></span>Stop</button>
                   <!-- <button id="shareButton" class="col-1 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-share"></i></span></button> -->
                   <button id="copyButton" class="col-1 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-copy"></i></span></button>
                 </div>
@@ -81,6 +81,18 @@
               <canvas id="canvas" width="600" height="600"></canvas>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+      <div id="copyToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+          <strong class="me-auto">Settings Copied!</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="copyToastBody" style="white-space: pre;">
+          Current settings copied to clipboard.
         </div>
       </div>
     </div>
@@ -108,6 +120,10 @@
 
       const parentDiv = document.getElementById('canvasDiv');
       const canvas = document.getElementById("canvas");
+
+      const copyToastDiv = document.getElementById('copyToast');
+      const copyToast = new bootstrap.Toast(copyToastDiv, { autohide: true, delay: 4000 });
+      const copyToastOutput = document.getElementById('copyToastBody');
 
       // Set initial canvas dimentions
       canvas.width = parentDiv.offsetWidth;
@@ -222,7 +238,7 @@
         if (isLoopRunning && loopDirection == "Forward") {
           btnForward.classList.remove('active');
           btnBackward.classList.remove('active');
-          btnStop.classList.add('active');
+          btnStop.classList.remove('active');
           clearInterval(loopInterval);
           isLoopRunning = false;
         } else {
@@ -239,7 +255,7 @@
         if (isLoopRunning && loopDirection == "Backward") {
           btnForward.classList.remove('active');
           btnBackward.classList.remove('active');
-          btnStop.classList.add('active');
+          btnStop.classList.remove('active');
           clearInterval(loopInterval);
           isLoopRunning = false;
         } else {      
@@ -255,7 +271,7 @@
       btnStop.addEventListener('click', () => {
         btnForward.classList.remove('active');
         btnBackward.classList.remove('active');
-        btnStop.classList.add('active');
+        btnStop.classList.remove('active');
         if (isLoopRunning) {
           clearInterval(loopInterval);
           isLoopRunning = false;
@@ -306,12 +322,22 @@
           "Saturation=" + dblAngle + "&LineLength=" + dblLineLength +
           "&PlotSpeed=" + dblPlotSpeed;
 
+        shareDescription = "URL and settings copied to the clipboard:\n" +
+          "Loop Multiplier: " + dblMultiplier + "\n" +
+          "Saturation Level: " + dblAngle + "\n" +
+          "Line Length: " + dblLineLength + "\n" +
+          "Plot Speed: " + dblPlotSpeed;
+
         try {
           await navigator.clipboard.writeText(shareURL);
           console.log('Text successfully copied to clipboard!');
         } catch (err) {
           console.error('Failed to copy text: ', err);
         }
+
+        copyToastOutput.textContent = shareDescription;
+        copyToast.show();
+
       });
 
 
