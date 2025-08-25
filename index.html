@@ -18,6 +18,15 @@
 
     <div class="container bg-body p-1">
       <div class="row">
+        <div class="col-lg-12 p-1">
+          <div class="card">
+            <div class="card-header" style="height: 45px;">
+              <h5><img src="favicon.svg" width="25" height="25" class="d-inline-block align-top" alt=""> SprioJS</h5>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
         <div class="col-lg-6 p-1">
           <div class="card">
             <div class="card-header">
@@ -65,7 +74,6 @@
                   <button id="backwardButton" class="col-3 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-backward"></i></span>Backward</button>
                   <button id="forwardButton" class="col-3 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-forward"></i></span>Forward</button>
                   <button id="stopButton" class="col-3 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-stop"></i></span>Stop</button>
-                  <!-- <button id="shareButton" class="col-1 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-share"></i></span></button> -->
                   <button id="copyButton" class="col-1 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-copy"></i></span></button>
                 </div>
               </div>
@@ -78,7 +86,7 @@
               Plot Canvas
             </div>
             <div class="card-body" id="canvasDiv">
-              <canvas id="canvas" width="600" height="600"></canvas>
+              <canvas id="canvas" width="600" height="550"></canvas>
             </div>
           </div>
         </div>
@@ -115,7 +123,6 @@
       const btnForward = document.getElementById('forwardButton');
       const btnBackward = document.getElementById('backwardButton');
       const btnStop = document.getElementById('stopButton');
-      // const btnShare = document.getElementById('shareButton');
       const btnCopy = document.getElementById('copyButton');
 
       const parentDiv = document.getElementById('canvasDiv');
@@ -279,37 +286,6 @@
       });
 
       // Define actions when stop button clicked
-      // btnShare.addEventListener('click', async () => {
-
-      //   let dblMultiplier = parseFloat(rangeInput.value);
-      //   let dblAngle = parseFloat(angleInput.value);
-      //   let dblLineLength = parseFloat(lineLengthInput.value);
-      //   let dblPlotSpeed = parseFloat(plotSpeedInput.value);
-
-      //   shareURL = siteBaseURL + "?Multiplier=" + dblMultiplier +
-      //     "Saturation=" + dblAngle + "&LineLength=" + dblLineLength +
-      //     "&PlotSpeed=" + dblPlotSpeed;
-
-      //   const shareData = {
-      //     title: 'SpiroJS - Animated Spiral Circle Graphs',
-      //     text: 'Check out this amazing site!',
-      //     url: shareURL
-      //   };
-
-      //   try {
-      //     if (navigator.share) {
-      //       await navigator.share(shareData);
-      //     } else {
-      //       // Fallback for browsers that don't support the API
-      //       alert('Web Share API is not supported on this browser.');
-      //     }
-      //   } catch (err) {
-      //     console.error(`Error: ${err}`);
-      //   }
-
-      // });
-
-      // Define actions when stop button clicked
       btnCopy.addEventListener('click', async () => {
 
         let dblMultiplier = parseFloat(rangeInput.value);
@@ -329,7 +305,6 @@
 
         try {
           await navigator.clipboard.writeText(shareURL);
-          console.log('Text successfully copied to clipboard!');
         } catch (err) {
           console.error('Failed to copy text: ', err);
         }
@@ -342,9 +317,14 @@
       // Add window resize listener
       window.addEventListener('resize', function() {
         canvas.width = parentDiv.offsetWidth;
-        canvas.height = parentDiv.offsetWidth * 0.95;
+        canvas.height = parentDiv.offsetWidth * 0.90;
         if (isLoopRunning) {
           loopCycle();
+        } else {
+          let dblMultiplier = parseFloat(rangeInput.value);
+          let dblAngle = parseFloat(angleInput.value);
+          let dblLineLength = parseFloat(lineLengthInput.value);
+          draw(dblMultiplier, dblAngle, dblLineLength);
         }
       });
 
@@ -413,7 +393,7 @@
           const plotAreaWidth = canvas.width;
           const plotAreaHeight = canvas.height;
 
-          const radiusScale = plotAreaWidth * 0.9;
+          const radiusScale = plotAreaWidth * 0.85;
           const plotAreaCenter = (plotAreaWidth/2) * 0.95;
 
           plotArea.clearRect(0, 0, plotAreaWidth, plotAreaHeight);
@@ -426,7 +406,7 @@
 
             dblRadius = radiusScale * Math.cos(dblMultiplier*dblAngle);
             x2 = (((dblRadius * Math.sin(dblAngle))/Math.PI)*1.5) + plotAreaCenter;
-            y2 = ((dblRadius * Math.cos(dblAngle))/2) + plotAreaCenter;
+            y2 = ((dblRadius * Math.cos(dblAngle))/2) + (plotAreaCenter*0.95);
 
             if (x1 == 0) {
               x1 = x2;
