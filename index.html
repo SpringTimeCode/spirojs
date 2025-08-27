@@ -21,7 +21,7 @@
         <div class="col-lg-12 p-1">
           <div class="card">
             <div class="card-header" style="height: 45px;">
-              <h5><img src="favicon.svg" width="25" height="25" class="d-inline-block align-top" alt=""> SprioJS</h5>
+              <h5><img src="favicon.svg" width="25" height="25" class="d-inline-block align-top" alt="SprioJS" style="border-radius: 15px;"> SprioJS</h5>
             </div>
           </div>
         </div>
@@ -75,6 +75,7 @@
                   <button id="forwardButton" class="col-3 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-forward"></i></span>Forward</button>
                   <button id="stopButton" class="col-3 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-stop"></i></span>Stop</button>
                   <button id="copyButton" class="col-1 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-copy"></i></span></button>
+                  <button id="themeToggleButton" class="col-1 btn btn-outline-primary text-nowrap"><span id="themeToggleIconLight" style="display: none"><i class="fa-classic fa-solid fa-sun"></i></span><span id="themeToggleIconDark" style="display: block"><i class="fa-classic fa-solid fa-moon" id="themeToggleIconDark"></i></span></button>
                 </div>
               </div>
             </div>
@@ -125,6 +126,10 @@
       const btnStop = document.getElementById('stopButton');
       const btnCopy = document.getElementById('copyButton');
 
+      const btnToggleTheme = document.getElementById('themeToggleButton');
+      const spanToggleThemeLight = document.getElementById('themeToggleIconLight');
+      const spanToggleThemeDark = document.getElementById('themeToggleIconDark');
+      
       const parentDiv = document.getElementById('canvasDiv');
       const canvas = document.getElementById("canvas");
 
@@ -132,9 +137,10 @@
       const copyToast = new bootstrap.Toast(copyToastDiv, { autohide: true, delay: 4000 });
       const copyToastOutput = document.getElementById('copyToastBody');
 
-      // Set initial canvas dimentions
+      // Set initial canvas settings
       canvas.width = parentDiv.offsetWidth;
       canvas.height = parentDiv.offsetHeight;
+      let strColorStroke = "#000000";
 
       // Set initial values
       let loopInterval;
@@ -202,7 +208,7 @@
           let dblMultiplier = parseFloat(this.value);
           let dblAngle = parseFloat(angleInput.value);
           let dblLineLength = parseFloat(lineLengthInput.value);
-          draw(dblMultiplier, dblAngle, dblLineLength);
+          draw(dblMultiplier, dblAngle, dblLineLength, strColorStroke);
         }
       });
 
@@ -215,7 +221,7 @@
           let dblMultiplier = parseFloat(rangeInput.value);
           let dblAngle = parseFloat(this.value);
           let dblLineLength = parseFloat(lineLengthInput.value);
-          draw(dblMultiplier, dblAngle, dblLineLength);
+          draw(dblMultiplier, dblAngle, dblLineLength, strColorStroke);
         }
       });
 
@@ -228,7 +234,7 @@
           let dblMultiplier = parseFloat(rangeInput.value);
           let dblAngle = parseFloat(angleInput.value);
           let dblLineLength = parseFloat(this.value);
-          draw(dblMultiplier, dblAngle, dblLineLength);
+          draw(dblMultiplier, dblAngle, dblLineLength, strColorStroke);
         }
       });
 
@@ -324,7 +330,7 @@
           let dblMultiplier = parseFloat(rangeInput.value);
           let dblAngle = parseFloat(angleInput.value);
           let dblLineLength = parseFloat(lineLengthInput.value);
-          draw(dblMultiplier, dblAngle, dblLineLength);
+          draw(dblMultiplier, dblAngle, dblLineLength, strColorStroke);
         }
       });
 
@@ -333,7 +339,7 @@
         let dblMultiplier = parseFloat(rangeInput.value);
         let dblAngle = parseFloat(angleInput.value);
         let dblLineLength = parseFloat(lineLengthInput.value);
-        draw(dblMultiplier, dblAngle, dblLineLength);
+        draw(dblMultiplier, dblAngle, dblLineLength, strColorStroke);
       });
 
       // Define function to cycle through chart plots
@@ -376,7 +382,7 @@
             rangeInput.value = dblMultiplierFormated;
             rangeOutput.textContent = 'Loop Multiplier: ' + dblMultiplierFormated;
 
-            draw(dblMultiplier, dblAngle, dblLineLength);
+            draw(dblMultiplier, dblAngle, dblLineLength, strColorStroke);
 
           }, dblPlotSpeed);
 
@@ -385,7 +391,7 @@
       };
 
       // Define function to draw a chart
-      function draw(dblMultiplier, dblAngleMax, dblLineLength) {
+      function draw(dblMultiplier, dblAngleMax, dblLineLength, strColorStroke="#000000") {
 
         if (canvas.getContext) {
 
@@ -396,6 +402,7 @@
           const radiusScale = plotAreaWidth * 0.85;
           const plotAreaCenter = (plotAreaWidth/2) * 0.95;
 
+          plotArea.strokeStyle = strColorStroke;
           plotArea.clearRect(0, 0, plotAreaWidth, plotAreaHeight);
 
           x1 = 0;
@@ -427,6 +434,26 @@
         }
 
       };
+
+
+
+      btnToggleTheme.addEventListener('click', () => {
+        if (document.documentElement.getAttribute('data-bs-theme') === 'dark') {
+          document.documentElement.setAttribute('data-bs-theme', 'light');
+          spanToggleThemeLight.style.display = 'none';
+          spanToggleThemeDark.style.display = 'block';
+          strColorStroke = "#000000";
+        } else {
+          document.documentElement.setAttribute('data-bs-theme', 'dark');
+          spanToggleThemeLight.style.display = 'block';
+          spanToggleThemeDark.style.display = 'none';
+          strColorStroke = "#EFEFEF";
+        }
+        let dblMultiplier = parseFloat(rangeInput.value);
+        let dblAngle = parseFloat(angleInput.value);
+        let dblLineLength = parseFloat(lineLengthInput.value);
+        draw(dblMultiplier, dblAngle, dblLineLength, strColorStroke);
+      });
 
       // Original Commodore 64 Code from 1982 (required SuperExpander Cartridge)
       // 1 graphic 2 : b = 0.1
