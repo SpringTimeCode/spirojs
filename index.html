@@ -9,9 +9,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SpiroJS - Animated Spiral Circle Graphs</title>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-    <script src=" https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/js/all.min.js "></script>
+    <script src="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/js/all.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
-    <link href=" https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/fontawesome.min.css " rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.0.0/css/fontawesome.min.css" rel="stylesheet">
     <link rel="icon" type="image/png" sizes="32x32" href="FAVICON.PNG">
   </head>
 
@@ -22,7 +22,7 @@
         <div class="col-lg-12 p-1">
           <div class="card">
             <div class="card-header" style="height: 45px;">
-              <h5><img src="favicon.svg" width="25" height="25" class="d-inline-block align-top" alt="SprioJS" style="border-radius: 15px;"> SprioJS</h5>
+              <h5><img src="favicon.svg" width="25" height="25" class="d-inline-block align-top" alt="SpiroJS" style="border-radius: 15px;"> SprioJS</h5>
             </div>
           </div>
         </div>
@@ -39,17 +39,17 @@
                   <label for="multiplierRange" class="form-label">Loop Multiplier:</label>
                 </div>
                 <div class="col-9 p-1">
-                  <input type="range" class="form-range" min="0" max="20" step="0.0001" id="multiplierRange">
+                  <input type="range" class="form-range" min="0" max="20" step="0.0001" id="multiplierRange" value="1.3">
                   <span id="multiplierRangeValue" aria-hidden="true"></span>
                 </div>
               </div>
               <div class="row p-3">
                 <div class="col-3 p-1">
-                  <label for="angleRange" class="form-label">Saturation Level:</label>
+                  <label for="saturationRange" class="form-label">Saturation Level:</label>
                 </div>
                 <div class="col-9 p-1">
-                  <input type="range" class="form-range" min="1" max="360" step="1" id="angleRange">
-                  <span id="angleRangeValue" aria-hidden="true"></span>
+                  <input type="range" class="form-range" min="1" max="360" step="1" id="saturationRange" value="50">
+                  <span id="saturationRangeValue" aria-hidden="true"></span>
                 </div>
               </div>
               <div class="row p-3">
@@ -57,7 +57,7 @@
                   <label for="lineLengthRange" class="form-label">Line Length:</label>
                 </div>
                 <div class="col-9 p-1">
-                  <input type="range" class="form-range" min="0.01" max="3" step="0.001" id="lineLengthRange">
+                  <input type="range" class="form-range" min="0.01" max="3" step="0.001" id="lineLengthRange" value="0.15">
                   <span id="lineLengthRangeValue" aria-hidden="true"></span>
                 </div>
               </div>
@@ -66,7 +66,7 @@
                   <label for="plotSpeedRange" class="form-label">Plot Speed:</label>
                 </div>
                 <div class="col-9 p-1">
-                  <input type="range" class="form-range" min="0" max="20" step="1" id="plotSpeedRange">
+                  <input type="range" class="form-range" min="0" max="20" step="1" id="plotSpeedRange" value="15">
                   <span id="plotSpeedRangeValue" aria-hidden="true"></span>
                 </div>
               </div>
@@ -98,11 +98,11 @@
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
       <div id="copyToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="toast-header">
-          <strong class="me-auto">Settings Copied!</strong>
+          <strong class="me-auto">URL Copied!</strong>
           <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
         <div class="toast-body" id="copyToastBody" style="white-space: pre;">
-          Current settings copied to clipboard.
+          URL with plot settings copied to the clipboard.
         </div>
       </div>
     </div>
@@ -113,8 +113,8 @@
       const rangeInput = document.getElementById('multiplierRange');
       const rangeOutput = document.getElementById('multiplierRangeValue');
 
-      const angleInput = document.getElementById('angleRange');
-      const angleOutput = document.getElementById('angleRangeValue');
+      const saturationInput = document.getElementById('saturationRange');
+      const saturationOutput = document.getElementById('saturationRangeValue');
 
       const lineLengthInput = document.getElementById('lineLengthRange');
       const lineLengthOutput = document.getElementById('lineLengthRangeValue');
@@ -155,42 +155,42 @@
       const siteBaseURL = siteFullURL.split(/[?#]/)[0];
 
       // Set initial loop multiplier value
-      dblMultiplier = 1.3;
+      let dblMultiplier = 1.3;
       if (urlParams.has('Multiplier')) {
         let tempValue = urlParams.get('Multiplier');
         if (!isNaN(tempValue)) {
-          if (tempValue >= 0 &&  tempValue <=20) {dblMultiplier = tempValue}
+          if (tempValue >= 0 &&  tempValue <=20) {dblMultiplier = parseFloat(tempValue)}
         } 
       }
-      dblMultiplierFormated = parseFloat(dblMultiplier).toFixed(4);
+      let dblMultiplierFormatted = parseFloat(dblMultiplier).toFixed(4);
       rangeInput.value = dblMultiplier;
-      rangeOutput.textContent = 'Loop Multiplier: ' + dblMultiplierFormated;
+      rangeOutput.textContent = 'Loop Multiplier: ' + dblMultiplierFormatted;
 
       // Set initial saturation level value
-      dblAngle = 50;
+      let dblSaturation = 50;
       if (urlParams.has('Saturation')) {
         let tempValue = urlParams.get('Saturation');
         if (!isNaN(tempValue)) {
-          if (tempValue >= 1 &&  tempValue <=360) {dblAngle = parseFloat(tempValue)}
+          if (tempValue >= 1 &&  tempValue <=360) {dblSaturation = parseFloat(tempValue)}
         } 
       }
-      angleInput.value = dblAngle;
-      angleOutput.textContent = 'Saturation Level: ' + angleInput.value;
+      saturationInput.value = dblSaturation;
+      saturationOutput.textContent = 'Saturation Level: ' + saturationInput.value;
 
       // Set initial line length value
-      dblLineLength = 0.15;
+      let dblLineLength = 0.15;
       if (urlParams.has('LineLength')) {
         let tempValue = urlParams.get('LineLength');
         if (!isNaN(tempValue)) {
           if (tempValue >= 0.01 &&  tempValue <=3) {dblLineLength = parseFloat(tempValue)}
         } 
       }
-      dblLineLengthFormated = parseFloat(dblLineLength).toFixed(3);
-      lineLengthInput.value = dblLineLengthFormated;
-      lineLengthOutput.textContent = 'Line Length: ' + dblLineLengthFormated;
+      let dblLineLengthFormatted = parseFloat(dblLineLength).toFixed(3);
+      lineLengthInput.value = dblLineLengthFormatted;
+      lineLengthOutput.textContent = 'Line Length: ' + dblLineLengthFormatted;
 
       // Set initial plot speed value
-      dblPlotSpeed = 15;
+      let dblPlotSpeed = 15;
       if (urlParams.has('PlotSpeed')) {
         let tempValue = urlParams.get('PlotSpeed');
         if (!isNaN(tempValue)) {
@@ -207,22 +207,22 @@
           loopCycle();
         } else {
           let dblMultiplier = parseFloat(this.value);
-          let dblAngle = parseFloat(angleInput.value);
+          let dblSaturation = parseFloat(saturationInput.value);
           let dblLineLength = parseFloat(lineLengthInput.value);
-          draw(dblMultiplier, dblAngle, dblLineLength, strColorStroke);
+          draw(dblMultiplier, dblSaturation, dblLineLength, strColorStroke);
         }
       });
 
       // Add saturation level listener
-      angleInput.addEventListener('input', function() {
-        angleOutput.textContent = 'Saturation Level: ' + this.value;
+      saturationInput.addEventListener('input', function() {
+        saturationOutput.textContent = 'Saturation Level: ' + this.value;
         if (isLoopRunning) {
           loopCycle();
         } else {
           let dblMultiplier = parseFloat(rangeInput.value);
-          let dblAngle = parseFloat(this.value);
+          let dblSaturation = parseFloat(this.value);
           let dblLineLength = parseFloat(lineLengthInput.value);
-          draw(dblMultiplier, dblAngle, dblLineLength, strColorStroke);
+          draw(dblMultiplier, dblSaturation, dblLineLength, strColorStroke);
         }
       });
 
@@ -233,9 +233,9 @@
           loopCycle();
         } else {
           let dblMultiplier = parseFloat(rangeInput.value);
-          let dblAngle = parseFloat(angleInput.value);
+          let dblSaturation = parseFloat(saturationInput.value);
           let dblLineLength = parseFloat(this.value);
-          draw(dblMultiplier, dblAngle, dblLineLength, strColorStroke);
+          draw(dblMultiplier, dblSaturation, dblLineLength, strColorStroke);
         }
       });
 
@@ -296,17 +296,17 @@
       btnCopy.addEventListener('click', async () => {
 
         let dblMultiplier = parseFloat(rangeInput.value);
-        let dblAngle = parseFloat(angleInput.value);
+        let dblSaturation = parseFloat(saturationInput.value);
         let dblLineLength = parseFloat(lineLengthInput.value);
         let dblPlotSpeed = parseFloat(plotSpeedInput.value);
 
-        shareURL = siteBaseURL + "?Multiplier=" + dblMultiplier +
-          "&Saturation=" + dblAngle + "&LineLength=" + dblLineLength +
+        let shareURL = siteBaseURL + "?Multiplier=" + dblMultiplier +
+          "&Saturation=" + dblSaturation + "&LineLength=" + dblLineLength +
           "&PlotSpeed=" + dblPlotSpeed;
 
-        shareDescription = "URL and settings copied to the clipboard:\n" +
+        let shareDescription = "URL with plot settings copied to the clipboard:\n" +
           "Loop Multiplier: " + dblMultiplier + "\n" +
-          "Saturation Level: " + dblAngle + "\n" +
+          "Saturation Level: " + dblSaturation + "\n" +
           "Line Length: " + dblLineLength + "\n" +
           "Plot Speed: " + dblPlotSpeed;
 
@@ -329,18 +329,18 @@
           loopCycle();
         } else {
           let dblMultiplier = parseFloat(rangeInput.value);
-          let dblAngle = parseFloat(angleInput.value);
+          let dblSaturation = parseFloat(saturationInput.value);
           let dblLineLength = parseFloat(lineLengthInput.value);
-          draw(dblMultiplier, dblAngle, dblLineLength, strColorStroke);
+          draw(dblMultiplier, dblSaturation, dblLineLength, strColorStroke);
         }
       });
 
       // Draw initial chart on page load
       document.addEventListener('DOMContentLoaded', function() {
         let dblMultiplier = parseFloat(rangeInput.value);
-        let dblAngle = parseFloat(angleInput.value);
+        let dblSaturation = parseFloat(saturationInput.value);
         let dblLineLength = parseFloat(lineLengthInput.value);
-        draw(dblMultiplier, dblAngle, dblLineLength, strColorStroke);
+        draw(dblMultiplier, dblSaturation, dblLineLength, strColorStroke);
       });
 
       // Define function to cycle through chart plots
@@ -358,6 +358,7 @@
           isLoopRunning = true;
           let count = 0;
 
+          let dblIncrement;
           if (loopDirection == "Forward") { 
             dblIncrement = 0.0001;
           } else {
@@ -365,7 +366,7 @@
           }
 
           let dblMultiplier = parseFloat(rangeInput.value);
-          let dblAngle = parseFloat(angleInput.value);
+          let dblSaturation = parseFloat(saturationInput.value);
           let dblLineLength = parseFloat(lineLengthInput.value);
           let dblPlotSpeed = 20 - parseFloat(plotSpeedInput.value);
 
@@ -379,11 +380,11 @@
               if (dblMultiplier <= 0) {dblMultiplier = 20};
             }
 
-            dblMultiplierFormated = dblMultiplier.toFixed(4);
-            rangeInput.value = dblMultiplierFormated;
-            rangeOutput.textContent = 'Loop Multiplier: ' + dblMultiplierFormated;
+            let dblMultiplierFormatted = dblMultiplier.toFixed(4);
+            rangeInput.value = dblMultiplierFormatted;
+            rangeOutput.textContent = 'Loop Multiplier: ' + dblMultiplierFormatted;
 
-            draw(dblMultiplier, dblAngle, dblLineLength, strColorStroke);
+            draw(dblMultiplier, dblSaturation, dblLineLength, strColorStroke);
 
           }, dblPlotSpeed);
 
@@ -391,8 +392,15 @@
 
       };
 
+      /**
+       * Draws the spiral plot on the canvas.
+       * @param {number} dblMultiplier - The loop multiplier affecting the spiral's shape.
+       * @param {number} dblSaturationMax - The maximum saturation/angle for plotting.
+       * @param {number} dblLineLength - The step size for each line segment.
+       * @param {string} strColorStroke - The stroke color for the plot lines.
+       */
       // Define function to draw a chart
-      function draw(dblMultiplier, dblAngleMax, dblLineLength, strColorStroke="#000000") {
+      function draw(dblMultiplier, dblSaturationMax, dblLineLength, strColorStroke="#000000") {
 
         if (canvas.getContext) {
 
@@ -405,16 +413,16 @@
 
           plotArea.strokeStyle = strColorStroke;
           plotArea.clearRect(0, 0, plotAreaWidth, plotAreaHeight);
+          let x1 = 0;
+          let y1 = 0;
+          let dblRadius, x2, y2;
 
-          x1 = 0;
-          y1 = 0;
+          for (let dblSaturation = dblLineLength; dblSaturation <= dblSaturationMax; 
+            dblSaturation = dblSaturation + dblLineLength) {
 
-          for (let dblAngle = dblLineLength; dblAngle <= dblAngleMax; 
-            dblAngle = dblAngle + dblLineLength) {
-
-            dblRadius = radiusScale * Math.cos(dblMultiplier*dblAngle);
-            x2 = (((dblRadius * Math.sin(dblAngle))/Math.PI)*1.5) + plotAreaCenter;
-            y2 = ((dblRadius * Math.cos(dblAngle))/2) + (plotAreaCenter*0.95);
+            dblRadius = radiusScale * Math.cos(dblMultiplier*dblSaturation);
+            x2 = (((dblRadius * Math.sin(dblSaturation))/Math.PI)*1.5) + plotAreaCenter;
+            y2 = ((dblRadius * Math.cos(dblSaturation))/2) + (plotAreaCenter*0.95);
 
             if (x1 == 0) {
               x1 = x2;
@@ -440,19 +448,19 @@
       btnToggleTheme.addEventListener('click', () => {
         if (document.documentElement.getAttribute('data-bs-theme') === 'dark') {
           document.documentElement.setAttribute('data-bs-theme', 'light');
-          spanToggleThemeLight.style.display = 'none';
-          spanToggleThemeDark.style.display = 'block';
+          spanToggleThemeLight.style.display = 'block';
+          spanToggleThemeDark.style.display = 'none';
           strColorStroke = "#000000";
         } else {
           document.documentElement.setAttribute('data-bs-theme', 'dark');
-          spanToggleThemeLight.style.display = 'block';
-          spanToggleThemeDark.style.display = 'none';
+          spanToggleThemeLight.style.display = 'none';
+          spanToggleThemeDark.style.display = 'block';
           strColorStroke = "#EFEFEF";
         }
         let dblMultiplier = parseFloat(rangeInput.value);
-        let dblAngle = parseFloat(angleInput.value);
+        let dblSaturation = parseFloat(saturationInput.value);
         let dblLineLength = parseFloat(lineLengthInput.value);
-        draw(dblMultiplier, dblAngle, dblLineLength, strColorStroke);
+        draw(dblMultiplier, dblSaturation, dblLineLength, strColorStroke);
       });
 
       // Original Commodore 64 Code from 1982 (required SuperExpander Cartridge)
