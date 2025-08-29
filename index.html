@@ -74,9 +74,9 @@
                 <div class="col-12 p-1 text-center">
                   <button id="backwardButton" class="col-3 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-caret-left fa-lg"></i></span>Backward</button>
                   <button id="forwardButton" class="col-3 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-caret-right fa-lg"></i></span>Forward</button>
-                  <button id="stopButton" class="col-3 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-stop"></i></span>Stop</button>
+                  <button id="stopButton" class="col-3 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-stop"></i></span> Stop</button>
                   <button id="copyButton" class="col-1 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-copy"></i></span></button>
-                  <button id="themeToggleButton" class="col-1 btn btn-outline-primary text-nowrap"><span id="themeToggleIconLight" style="display: none"><i class="fa-classic fa-solid fa-sun"></i></span><span id="themeToggleIconDark" style="display: block"><i class="fa-classic fa-solid fa-moon" id="themeToggleIconDark"></i></span></button>
+                  <button id="themeToggleButton" class="col-1 btn btn-outline-primary text-nowrap"><span id="themeToggleIconLight" style="display: none"><i class="fa-classic fa-solid fa-sun"></i><i class="bi bi-sun-fill"></i></span><span id="themeToggleIconDark" style="display: block"><i class="fa-classic fa-solid fa-moon"></i></span></button>
                 </div>
               </div>
             </div>
@@ -436,8 +436,7 @@
 
       };
 
-
-
+      // Toggle between light and dark themes
       btnToggleTheme.addEventListener('click', () => {
         if (document.documentElement.getAttribute('data-bs-theme') === 'dark') {
           document.documentElement.setAttribute('data-bs-theme', 'light');
