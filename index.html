@@ -22,7 +22,7 @@
         <div class="col-lg-12 p-1">
           <div class="card">
             <div class="card-header" style="height: 45px;">
-              <h5><img src="favicon.svg" width="25" height="25" class="d-inline-block align-top" alt="SpiroJS" style="border-radius: 15px;"> SprioJS</h5>
+              <h5><img src="favicon.svg" width="25" height="25" class="d-inline-block align-top" alt="SpiroJS" style="border-radius: 15px;"> SpiroJS</h5>
             </div>
           </div>
         </div>
@@ -300,9 +300,9 @@
         let dblLineLength = parseFloat(lineLengthInput.value);
         let dblPlotSpeed = parseFloat(plotSpeedInput.value);
 
-        let shareURL = siteBaseURL + "?Multiplier=" + dblMultiplier +
-          "&Saturation=" + dblSaturation + "&LineLength=" + dblLineLength +
-          "&PlotSpeed=" + dblPlotSpeed;
+        let shareURL = siteBaseURL + "?Multiplier=" + encodeURIComponent(dblMultiplier) +
+          "&Saturation=" + encodeURIComponent(dblSaturation) + "&LineLength=" + encodeURIComponent(dblLineLength) +
+          "&PlotSpeed=" + encodeURIComponent(dblPlotSpeed);
 
         let shareDescription = "URL with plot settings copied to the clipboard:\n" +
           "Loop Multiplier: " + dblMultiplier + "\n" +
@@ -386,7 +386,7 @@
 
             draw(dblMultiplier, dblSaturation, dblLineLength, strColorStroke);
 
-          }, dblPlotSpeed);
+          }, Math.max(dblPlotSpeed, 1));
 
         }
 
@@ -395,12 +395,11 @@
       /**
        * Draws the spiral plot on the canvas.
        * @param {number} dblMultiplier - The loop multiplier affecting the spiral's shape.
-       * @param {number} dblSaturationMax - The maximum saturation/angle for plotting.
+       * @param {number} dblSaturation - The maximum saturation/angle for plotting.
        * @param {number} dblLineLength - The step size for each line segment.
        * @param {string} strColorStroke - The stroke color for the plot lines.
        */
-      // Define function to draw a chart
-      function draw(dblMultiplier, dblSaturationMax, dblLineLength, strColorStroke="#000000") {
+      function draw(dblMultiplier, dblSaturation, dblLineLength, strColorStroke) {
 
         if (canvas.getContext) {
 
@@ -409,20 +408,21 @@
           const plotAreaHeight = canvas.height;
 
           const radiusScale = plotAreaWidth * 0.85;
-          const plotAreaCenter = (plotAreaWidth/2) * 0.95;
+          // The 0.95 multiplier slightly shifts the center to better fit the spiral within the canvas area.
+                    const plotAreaCenter = (plotAreaWidth/2) * 0.95;
 
-          plotArea.strokeStyle = strColorStroke;
           plotArea.clearRect(0, 0, plotAreaWidth, plotAreaHeight);
+          plotArea.strokeStyle = strColorStroke;
           let x1 = 0;
           let y1 = 0;
           let dblRadius, x2, y2;
 
-          for (let dblSaturation = dblLineLength; dblSaturation <= dblSaturationMax; 
-            dblSaturation = dblSaturation + dblLineLength) {
+          for (let dblSaturationCurrent = dblLineLength; dblSaturationCurrent <= dblSaturation; 
+            dblSaturationCurrent = dblSaturationCurrent + dblLineLength) {
 
-            dblRadius = radiusScale * Math.cos(dblMultiplier*dblSaturation);
-            x2 = (((dblRadius * Math.sin(dblSaturation))/Math.PI)*1.5) + plotAreaCenter;
-            y2 = ((dblRadius * Math.cos(dblSaturation))/2) + (plotAreaCenter*0.95);
+            dblRadius = radiusScale * Math.cos(dblMultiplier*dblSaturationCurrent);
+            x2 = (((dblRadius * Math.sin(dblSaturationCurrent))/Math.PI)*1.5) + plotAreaCenter;
+            y2 = ((dblRadius * Math.cos(dblSaturationCurrent))/2) + (plotAreaCenter*0.95);
 
             if (x1 == 0) {
               x1 = x2;
@@ -455,7 +455,7 @@
           document.documentElement.setAttribute('data-bs-theme', 'dark');
           spanToggleThemeLight.style.display = 'none';
           spanToggleThemeDark.style.display = 'block';
-          strColorStroke = "#EFEFEF";
+          strColorStroke = "#FFFFFF";
         }
         let dblMultiplier = parseFloat(rangeInput.value);
         let dblSaturation = parseFloat(saturationInput.value);
