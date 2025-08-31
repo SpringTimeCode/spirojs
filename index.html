@@ -375,7 +375,7 @@
         try {
           await navigator.clipboard.writeText(shareURL);
         } catch (err) {
-          console.error('Failed to copy text: ', err);
+          console.error('Failed to copy url and plot settings: ', err);
         }
 
         copyToastOutput.textContent = shareDescription;
@@ -392,9 +392,8 @@
           });
           const clipboardItem = new ClipboardItem({ [blob.type]: blob });
           await navigator.clipboard.write([clipboardItem]);
-          console.log('Canvas image copied to clipboard!');
         } catch (error) {
-            console.error('Error copying canvas image:', error);
+            console.error('Failed to copy canvas image:', error);
         }
 
         imageToastOutput.textContent = "Image copied to the clipboard.";
