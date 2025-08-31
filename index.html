@@ -85,6 +85,8 @@
                   <button id="forwardButton" class="col-2 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-caret-right fa-lg"></i></span></button>
                   <button id="stopButton" class="col-2 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-stop"></i></span> </button>
                   <button id="themeToggleButton" class="col-2 btn btn-outline-primary text-nowrap"><span id="themeToggleIconLight" style="display: block"><i class="fa-classic fa-solid fa-sun"></i></span><span id="themeToggleIconDark" style="display: none"><i class="fa-classic fa-solid fa-moon"></i></span></button>
+                </div>
+                <div class="col-12 p-1 text-center">
                   <button id="copyButton" class="col-2 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-copy"></i></span></button>
                   <button id="imageButton" class="col-2 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-camera"></i></span></button>
                 </div>
@@ -113,6 +115,18 @@
         </div>
         <div class="toast-body" id="copyToastBody" style="white-space: pre;">
           URL with plot settings copied to the clipboard.
+        </div>
+      </div>
+    </div>
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+      <div id="imageToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+          <strong class="me-auto">Image Copied!</strong>
+          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body" id="imageToastBody" style="white-space: pre;">
+          Image copied to the clipboard.
         </div>
       </div>
     </div>
@@ -151,6 +165,10 @@
       const copyToastDiv = document.getElementById('copyToast');
       const copyToast = new bootstrap.Toast(copyToastDiv, { autohide: true, delay: 4000 });
       const copyToastOutput = document.getElementById('copyToastBody');
+
+      const imageToastDiv = document.getElementById('imageToast');
+      const imageToast = new bootstrap.Toast(imageToastDiv, { autohide: true, delay: 4000 });
+      const imageToastOutput = document.getElementById('imageToastBody');
 
       // Set initial canvas settings
       canvas.width = parentDiv.offsetWidth - 4;
@@ -365,6 +383,25 @@
 
       });
 
+      // Define actions when image button clicked
+      btnImage.addEventListener('click', async () => {
+
+        try {
+          const blob = await new Promise(resolve => {
+            canvas.toBlob(resolve, 'image/png');
+          });
+          const clipboardItem = new ClipboardItem({ [blob.type]: blob });
+          await navigator.clipboard.write([clipboardItem]);
+          console.log('Canvas image copied to clipboard!');
+        } catch (error) {
+            console.error('Error copying canvas image:', error);
+        }
+
+        imageToastOutput.textContent = "Image copied to the clipboard.";
+        imageToast.show();
+
+      });
+
       // Add window resize listener
       window.addEventListener('resize', function() {
         canvas.width = parentDiv.offsetWidth - 4;
@@ -510,22 +547,6 @@
         }
 
       };
-
-
-      //canvas.toBlob(blob => navigator.clipboard.write([new ClipboardItem({'image/png': blob})]))
-      // Define actions when copy button clicked
-      btnImage.addEventListener('click', async () => {
-        try {
-            const blob = await new Promise(resolve => {
-                canvas.toBlob(resolve, 'image/png');
-            });
-            const clipboardItem = new ClipboardItem({ [blob.type]: blob });
-            await navigator.clipboard.write([clipboardItem]);
-            console.log('Canvas image copied to clipboard!');
-          } catch (error) {
-              console.error('Error copying canvas image:', error);
-          }
-      });
 
       // Original Commodore 64 Code from 1982 (required SuperExpander Cartridge)
       // 1 graphic 2 : b = 0.1
