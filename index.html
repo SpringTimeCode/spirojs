@@ -36,11 +36,11 @@
             <div class="card-body">
               <div class="row p-3">
                 <div class="col-3 p-1">
-                  <label for="multiplierRange" class="form-label">Loop Multiplier:</label>
+                  <label for="lineLengthRange" class="form-label">Line Length:</label>
                 </div>
                 <div class="col-9 p-1">
-                  <input type="range" class="form-range" min="0" max="20" step="0.0001" id="multiplierRange" value="1.3">
-                  <span id="multiplierRangeValue" aria-hidden="true"></span>
+                  <input type="range" class="form-range" min="0.01" max="3" step="0.001" id="lineLengthRange" value="0.15">
+                  <span id="lineLengthRangeValue" aria-hidden="true"></span>
                 </div>
               </div>
               <div class="row p-3">
@@ -54,11 +54,11 @@
               </div>
               <div class="row p-3">
                 <div class="col-3 p-1">
-                  <label for="lineLengthRange" class="form-label">Line Length:</label>
+                  <label for="plotSizeRange" class="form-label">Plot Size:</label>
                 </div>
                 <div class="col-9 p-1">
-                  <input type="range" class="form-range" min="0.01" max="3" step="0.001" id="lineLengthRange" value="0.15">
-                  <span id="lineLengthRangeValue" aria-hidden="true"></span>
+                  <input type="range" class="form-range" min="10" max="100" step="1" id="plotSizeRange" value="90">
+                  <span id="plotSizeRangeValue" aria-hidden="true"></span>
                 </div>
               </div>
               <div class="row p-3">
@@ -72,20 +72,21 @@
               </div>
               <div class="row p-3">
                 <div class="col-3 p-1">
-                  <label for="plotSizeRange" class="form-label">Plot Size:</label>
+                  <label for="multiplierRange" class="form-label">Loop Multiplier:</label>
                 </div>
                 <div class="col-9 p-1">
-                  <input type="range" class="form-range" min="10" max="100" step="1" id="plotSizeRange" value="90">
-                  <span id="plotSizeRangeValue" aria-hidden="true"></span>
+                  <input type="range" class="form-range" min="0" max="20" step="0.0001" id="multiplierRange" value="1.3">
+                  <span id="multiplierRangeValue" aria-hidden="true"></span>
                 </div>
               </div>
               <div class="row p-3">
                 <div class="col-12 p-1 text-center">
-                  <button id="backwardButton" class="col-3 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-caret-left fa-lg"></i></span>Backward</button>
-                  <button id="forwardButton" class="col-3 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-caret-right fa-lg"></i></span>Forward</button>
-                  <button id="stopButton" class="col-3 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-stop"></i></span> Stop</button>
-                  <button id="copyButton" class="col-1 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-copy"></i></span></button>
-                  <button id="themeToggleButton" class="col-1 btn btn-outline-primary text-nowrap"><span id="themeToggleIconLight" style="display: block"><i class="fa-classic fa-solid fa-sun"></i></span><span id="themeToggleIconDark" style="display: none"><i class="fa-classic fa-solid fa-moon"></i></span></button>
+                  <button id="backwardButton" class="col-2 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-caret-left fa-lg"></i></span></button>
+                  <button id="forwardButton" class="col-2 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-caret-right fa-lg"></i></span></button>
+                  <button id="stopButton" class="col-2 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-stop"></i></span> </button>
+                  <button id="themeToggleButton" class="col-2 btn btn-outline-primary text-nowrap"><span id="themeToggleIconLight" style="display: block"><i class="fa-classic fa-solid fa-sun"></i></span><span id="themeToggleIconDark" style="display: none"><i class="fa-classic fa-solid fa-moon"></i></span></button>
+                  <button id="copyButton" class="col-2 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-copy"></i></span></button>
+                  <button id="imageButton" class="col-2 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-camera"></i></span></button>
                 </div>
               </div>
             </div>
@@ -138,6 +139,7 @@
       const btnBackward = document.getElementById('backwardButton');
       const btnStop = document.getElementById('stopButton');
       const btnCopy = document.getElementById('copyButton');
+      const btnImage = document.getElementById('imageButton');
 
       const btnToggleTheme = document.getElementById('themeToggleButton');
       const spanToggleThemeLight = document.getElementById('themeToggleIconLight');
@@ -332,7 +334,7 @@
         }
       });
 
-      // Define actions when stop button clicked
+      // Define actions when copy button clicked
       btnCopy.addEventListener('click', async () => {
 
         let dblMultiplier = parseFloat(rangeInput.value);
@@ -474,7 +476,6 @@
           const plotAreaHeight = canvas.height;
 
           const radiusScale = plotAreaWidth * 0.925 * (dblPlotSize / 100);
-          // The 0.95 multiplier slightly shifts the center to better fit the spiral within the canvas area.
           const plotAreaCenter = (plotAreaWidth/2);
 
           plotArea.clearRect(0, 0, plotAreaWidth, plotAreaHeight);
@@ -509,6 +510,22 @@
         }
 
       };
+
+
+      //canvas.toBlob(blob => navigator.clipboard.write([new ClipboardItem({'image/png': blob})]))
+      // Define actions when copy button clicked
+      btnImage.addEventListener('click', async () => {
+        try {
+            const blob = await new Promise(resolve => {
+                canvas.toBlob(resolve, 'image/png');
+            });
+            const clipboardItem = new ClipboardItem({ [blob.type]: blob });
+            await navigator.clipboard.write([clipboardItem]);
+            console.log('Canvas image copied to clipboard!');
+          } catch (error) {
+              console.error('Error copying canvas image:', error);
+          }
+      });
 
       // Original Commodore 64 Code from 1982 (required SuperExpander Cartridge)
       // 1 graphic 2 : b = 0.1
