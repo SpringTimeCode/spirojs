@@ -243,6 +243,26 @@
       plotSizeInput.value = dblPlotSize;
       plotSizeOutput.textContent = 'Plot Size: ' + plotSizeInput.value;
 
+      // Set initial theme based on system preference
+      let strThemePreference = "light";
+
+      if (urlParams.has('Theme')) {
+        let tempValue = urlParams.get('Theme').toLowerCase();
+        if (tempValue === "light") {
+          document.documentElement.setAttribute('data-bs-theme', 'light');
+          spanToggleThemeLight.style.display = 'block';
+          spanToggleThemeDark.style.display = 'none';
+          strColorStroke = "#000000";
+          strThemePreference = "light";
+        } else {
+          document.documentElement.setAttribute('data-bs-theme', 'dark');
+          spanToggleThemeLight.style.display = 'none';
+          spanToggleThemeDark.style.display = 'block';
+          strColorStroke = "#FFFFFF";
+          strThemePreference = "dark";
+        }
+      };
+
       // Add loop multiplier listener
       rangeInput.addEventListener('input', function() {
         rangeOutput.textContent = 'Loop Multiplier: ' + parseFloat(this.value).toFixed(4);
@@ -363,14 +383,16 @@
 
         let shareURL = siteBaseURL + "?Multiplier=" + encodeURIComponent(dblMultiplier) +
           "&Saturation=" + encodeURIComponent(dblSaturation) + "&LineLength=" + encodeURIComponent(dblLineLength) +
-          "&PlotSpeed=" + encodeURIComponent(dblPlotSpeed) + "&PlotSize=" + encodeURIComponent(dblPlotSize);
+          "&PlotSpeed=" + encodeURIComponent(dblPlotSpeed) + "&PlotSize=" + encodeURIComponent(dblPlotSize) +
+          "&Theme=" + encodeURIComponent(strThemePreference);
 
         let shareDescription = "URL with plot settings copied to the clipboard:\n" +
           "Loop Multiplier: " + dblMultiplier + "\n" +
           "Saturation Level: " + dblSaturation + "\n" +
           "Line Length: " + dblLineLength + "\n" +
           "Plot Speed: " + dblPlotSpeed + "\n" +
-          "Plot Size: " + dblPlotSize;
+          "Plot Size: " + dblPlotSize + "\n" +
+          "Theme: " + strThemePreference;
 
         try {
           await navigator.clipboard.writeText(shareURL);
@@ -432,11 +454,13 @@
           spanToggleThemeLight.style.display = 'block';
           spanToggleThemeDark.style.display = 'none';
           strColorStroke = "#000000";
+          strThemePreference = "light";
         } else {
           document.documentElement.setAttribute('data-bs-theme', 'dark');
           spanToggleThemeLight.style.display = 'none';
           spanToggleThemeDark.style.display = 'block';
           strColorStroke = "#FFFFFF";
+          strThemePreference = "dark";
         }
         let dblMultiplier = parseFloat(rangeInput.value);
         let dblSaturation = parseFloat(saturationInput.value);
