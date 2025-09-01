@@ -617,28 +617,22 @@
           }
         } catch (err) {
           console.error('Error handling data available event:', err);
-          // alert('An error occurred while capturing video data.');
         }
       };
-
 
       // When recording stops, create a Blob from the recorded chunks and provide a download link
       mediaRecorder.onstop = function () {
         try {
           btnVideo.classList.remove('active');
-
           const blob = new Blob(recordedChunks, { type: 'video/webm' });
           recordedChunks = [];
-
           const url = URL.createObjectURL(blob);
           const a = document.createElement('a');
           a.style.display = 'none';
           a.href = url;
           a.download = 'spirojs_recording.webm';
-
           document.body.appendChild(a);
           a.click();
-
           setTimeout(() => {
             try {
               document.body.removeChild(a);
@@ -647,11 +641,9 @@
               console.error('Error during cleanup:', cleanupError);
             }
           }, 100);
-
           videoToast.show();
         } catch (err) {
           console.error('Error during recording stop handling:', err);
-          // alert('An error occurred while processing the video recording.');
         }
       };
 
@@ -659,21 +651,17 @@
       btnVideo.addEventListener("click", () => {
         try {
           isRecording = !isRecording;
-
           if (isRecording) {
             btnVideo.classList.add('active');
             recordedChunks = [];
-
             try {
               mediaRecorder.start();
             } catch (startError) {
               console.error('Error starting media recorder:', startError);
-              // alert('Failed to start video recording.');
               isRecording = false;
               btnVideo.classList.remove('active');
               return;
             }
-
             recordingTimeout = setTimeout(() => {
               if (isRecording) {
                 isRecording = false;
@@ -681,7 +669,6 @@
                   mediaRecorder.stop();
                 } catch (stopError) {
                   console.error('Error stopping media recorder after timeout:', stopError);
-                  // alert('Failed to stop video recording after timeout.');
                 }
               }
             }, recordingDuration);
@@ -690,12 +677,10 @@
               mediaRecorder.stop();
             } catch (manualStopError) {
               console.error('Error stopping media recorder manually:', manualStopError);
-              // alert('Failed to stop video recording.');
             }
           }
         } catch (err) {
           console.error('Unexpected error during video button click handling:', err);
-          // alert('An unexpected error occurred while handling the video recording.');
         }
       });
 
