@@ -87,6 +87,7 @@
                   <button id="themeToggleButton" class="col-2 btn btn-outline-primary text-nowrap"><span id="themeToggleIconLight" style="display: block"><i class="fa-classic fa-solid fa-sun"></i></span><span id="themeToggleIconDark" style="display: none"><i class="fa-classic fa-solid fa-moon"></i></span></button>
                 </div>
                 <div class="col-12 p-1 text-center">
+                  <button id="videoButton" class="col-2 btn btn-outline-danger text-nowrap"><span><i class="fa-classic fa-solid fa-video"></i></span></button>
                   <button id="copyButton" class="col-2 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-copy"></i></span></button>
                   <button id="imageButton" class="col-2 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-camera"></i></span></button>
                 </div>
@@ -154,6 +155,7 @@
       const btnStop = document.getElementById('stopButton');
       const btnCopy = document.getElementById('copyButton');
       const btnImage = document.getElementById('imageButton');
+      const btnVideo = document.getElementById('videoButton');
 
       const btnToggleTheme = document.getElementById('themeToggleButton');
       const spanToggleThemeLight = document.getElementById('themeToggleIconLight');
@@ -170,15 +172,20 @@
       const imageToast = new bootstrap.Toast(imageToastDiv, { autohide: true, delay: 4000 });
       const imageToastOutput = document.getElementById('imageToastBody');
 
+      const videoToastDiv = document.getElementById('videoToast');
+      const videoToast = new bootstrap.Toast(videoToastDiv, { autohide: true, delay: 4000 });
+      const videoToastOutput = document.getElementById('videoToastBody');
+
       // Set initial canvas settings
       canvas.width = parentDiv.offsetWidth - 4;
       canvas.height = parentDiv.offsetWidth * 0.945;
       let strColorStroke = "#000000";
 
       // Set initial values
-      let loopInterval;
       let isLoopRunning = false;
+      let loopInterval;
       let loopDirection = "Forward";
+      btnVideo.disabled = true;
 
       // Get url and query string
       const queryString = window.location.search;
@@ -333,12 +340,17 @@
           btnForward.classList.remove('active');
           btnBackward.classList.remove('active');
           btnStop.classList.remove('active');
+          btnVideo.disabled = true;
           clearInterval(loopInterval);
           isLoopRunning = false;
+          if (isRecording) {
+            mediaRecorder.stop();
+          }
         } else {
           btnForward.classList.add('active');
           btnBackward.classList.remove('active');
           btnStop.classList.remove('active');
+          btnVideo.disabled = false;
           loopDirection = "Forward";
           loopCycle();
         }
@@ -350,12 +362,17 @@
           btnForward.classList.remove('active');
           btnBackward.classList.remove('active');
           btnStop.classList.remove('active');
+          btnVideo.disabled = true;
           clearInterval(loopInterval);
           isLoopRunning = false;
+          if (isRecording) {
+            mediaRecorder.stop();
+          }
         } else {      
           btnForward.classList.remove('active');
           btnBackward.classList.add('active');
           btnStop.classList.remove('active');
+          btnVideo.disabled = false;
           loopDirection = "Backward";
           loopCycle();
         }
@@ -366,9 +383,13 @@
         btnForward.classList.remove('active');
         btnBackward.classList.remove('active');
         btnStop.classList.remove('active');
+        btnVideo.disabled = true;
         if (isLoopRunning) {
           clearInterval(loopInterval);
           isLoopRunning = false;
+        }
+        if (isRecording) {
+          mediaRecorder.stop();
         }
       });
 
@@ -407,7 +428,6 @@
 
       // Define actions when image button clicked
       btnImage.addEventListener('click', async () => {
-
         try {
           const blob = await new Promise(resolve => {
             canvas.toBlob(resolve, 'image/png');
@@ -415,12 +435,10 @@
           const clipboardItem = new ClipboardItem({ [blob.type]: blob });
           await navigator.clipboard.write([clipboardItem]);
         } catch (error) {
-            console.error('Failed to copy canvas image:', error);
+          console.error('Failed to copy canvas image:', error);
         }
-
         imageToastOutput.textContent = "Image copied to the clipboard.";
         imageToast.show();
-
       });
 
       // Add window resize listener
@@ -570,6 +588,58 @@
         }
 
       };
+
+      // Set video recording values
+      let isRecording = false;
+      let recordingTimeout;
+      const canvasStream = canvas.captureStream(25); // Capture at 25 frames per second
+      const mediaRecorder = new MediaRecorder(canvasStream, { mimeType: 'video/webm;codecs=vp8' });
+      const recordingDuration = 30000;
+
+      // Array to store recorded video chunks
+      let recordedChunks = [];
+      mediaRecorder.ondataavailable = function(event) {
+        if (event.data.size > 0) {
+          recordedChunks.push(event.data);
+        }
+      };
+
+      // When recording stops, create a Blob from the recorded chunks and provide a download link
+      mediaRecorder.onstop = function() {
+        btnVideo.classList.remove('active');
+        const blob = new Blob(recordedChunks, { type: 'video/webm' });
+        recordedChunks = [];
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = 'spirojs_recording.webm';
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => {
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
+        }, 100);
+        videoToast.show();
+      };
+
+      // Define actions when video button clicked
+      btnVideo.addEventListener("click", () => {
+        isRecording = !isRecording;
+        if(isRecording){
+          btnVideo.classList.add('active');
+          recordedChunks = [];
+          mediaRecorder.start();
+          recordingTimeout = setTimeout(() => {
+            if (isRecording) {
+              isRecording = false;
+              mediaRecorder.stop();
+            }
+          }, recordingDuration);
+        } else {
+          mediaRecorder.stop();
+        }
+      });
 
       // Original Commodore 64 Code from 1982 (required SuperExpander Cartridge)
       // 1 graphic 2 : b = 0.1
