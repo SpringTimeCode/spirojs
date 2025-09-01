@@ -87,7 +87,7 @@
                   <button id="themeToggleButton" class="col-2 btn btn-outline-primary text-nowrap"><span id="themeToggleIconLight" style="display: block"><i class="fa-classic fa-solid fa-sun"></i></span><span id="themeToggleIconDark" style="display: none"><i class="fa-classic fa-solid fa-moon"></i></span></button>
                 </div>
                 <div class="col-12 p-1 text-center">
-                  <button id="videoButton" class="col-2 btn btn-outline-danger text-nowrap" style="display: none;"><span><i class="fa-classic fa-solid fa-video"></i></span></button>
+                  <button id="videoButton" class="col-2 btn btn-outline-danger text-nowrap"><span><i class="fa-classic fa-solid fa-video"></i></span></button>
                   <button id="copyButton" class="col-2 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-copy"></i></span></button>
                   <button id="imageButton" class="col-2 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-camera"></i></span></button>
                 </div>
@@ -611,45 +611,91 @@
       // Array to store recorded video chunks
       let recordedChunks = [];
       mediaRecorder.ondataavailable = function(event) {
-        if (event.data.size > 0) {
-          recordedChunks.push(event.data);
+        try {
+          if (event.data.size > 0) {
+            recordedChunks.push(event.data);
+          }
+        } catch (err) {
+          console.error('Error handling data available event:', err);
+          // alert('An error occurred while capturing video data.');
         }
       };
 
+
       // When recording stops, create a Blob from the recorded chunks and provide a download link
-      mediaRecorder.onstop = function() {
-        btnVideo.classList.remove('active');
-        const blob = new Blob(recordedChunks, { type: 'video/webm' });
-        recordedChunks = [];
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.style.display = 'none';
-        a.href = url;
-        a.download = 'spirojs_recording.webm';
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(() => {
-          document.body.removeChild(a);
-          window.URL.revokeObjectURL(url);
-        }, 100);
-        videoToast.show();
+      mediaRecorder.onstop = function () {
+        try {
+          btnVideo.classList.remove('active');
+
+          const blob = new Blob(recordedChunks, { type: 'video/webm' });
+          recordedChunks = [];
+
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.style.display = 'none';
+          a.href = url;
+          a.download = 'spirojs_recording.webm';
+
+          document.body.appendChild(a);
+          a.click();
+
+          setTimeout(() => {
+            try {
+              document.body.removeChild(a);
+              window.URL.revokeObjectURL(url);
+            } catch (cleanupError) {
+              console.error('Error during cleanup:', cleanupError);
+            }
+          }, 100);
+
+          videoToast.show();
+        } catch (err) {
+          console.error('Error during recording stop handling:', err);
+          // alert('An error occurred while processing the video recording.');
+        }
       };
 
       // Define actions when video button clicked
       btnVideo.addEventListener("click", () => {
-        isRecording = !isRecording;
-        if(isRecording){
-          btnVideo.classList.add('active');
-          recordedChunks = [];
-          mediaRecorder.start();
-          recordingTimeout = setTimeout(() => {
-            if (isRecording) {
+        try {
+          isRecording = !isRecording;
+
+          if (isRecording) {
+            btnVideo.classList.add('active');
+            recordedChunks = [];
+
+            try {
+              mediaRecorder.start();
+            } catch (startError) {
+              console.error('Error starting media recorder:', startError);
+              // alert('Failed to start video recording.');
               isRecording = false;
-              mediaRecorder.stop();
+              btnVideo.classList.remove('active');
+              return;
             }
-          }, recordingDuration);
-        } else {
-          mediaRecorder.stop();
+
+            recordingTimeout = setTimeout(() => {
+              if (isRecording) {
+                isRecording = false;
+                try {
+                  mediaRecorder.stop();
+                } catch (stopError) {
+                  console.error('Error stopping media recorder after timeout:', stopError);
+                  // alert('Failed to stop video recording after timeout.');
+                }
+              }
+            }, recordingDuration);
+          } else {
+            try {
+              mediaRecorder.stop();
+            } catch (manualStopError) {
+              console.error('Error stopping media recorder manually:', manualStopError);
+              // alert('Failed to stop video recording.');
+            }
+          }
+        } catch (err) {
+          console.error('Unexpected error during video button click handling:', err);
+          // alert('An unexpected error occurred while handling the video recording.');
         }
       });
 
