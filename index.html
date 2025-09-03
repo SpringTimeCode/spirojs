@@ -605,7 +605,7 @@
       let isRecording = false;
       let recordingTimeout;
       const canvasStream = canvas.captureStream(25); // Capture at 25 frames per second
-      const mediaRecorder = new MediaRecorder(canvasStream, { mimeType: 'video/webm;codecs=vp8' });
+      const mediaRecorder = new MediaRecorder(canvasStream, { mimeType: 'video/webm' });
       const recordingDuration = 30000;
 
       // Array to store recorded video chunks
@@ -630,7 +630,7 @@
           const a = document.createElement('a');
           a.style.display = 'none';
           a.href = url;
-          alert(a.href);
+          // alert(a.href);
           a.download = 'spirojs_recording.webm';
           document.body.appendChild(a);
           a.click();
