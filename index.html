@@ -88,7 +88,6 @@
                   <button id="themeToggleButton" class="col-2 btn btn-outline-primary text-nowrap"><span id="themeToggleIconLight" style="display: block"><i class="fa-classic fa-solid fa-sun"></i></span><span id="themeToggleIconDark" style="display: none"><i class="fa-classic fa-solid fa-moon"></i></span></button>
                 </div>
                 <div class="col-12 p-1 text-center">
-                  <button id="videoButton" class="col-2 btn btn-outline-danger text-nowrap" style="display: none"><span><i class="fa-classic fa-solid fa-video"></i></span></button>
                   <button id="copyButton" class="col-2 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-copy"></i></span></button>
                   <button id="imageButton" class="col-2 btn btn-outline-primary text-nowrap"><span><i class="fa-classic fa-solid fa-camera"></i></span></button>
                 </div>
@@ -168,7 +167,6 @@
       const btnStop = document.getElementById('stopButton');
       const btnCopy = document.getElementById('copyButton');
       const btnImage = document.getElementById('imageButton');
-      const btnVideo = document.getElementById('videoButton');
 
       const btnToggleTheme = document.getElementById('themeToggleButton');
       const spanToggleThemeLight = document.getElementById('themeToggleIconLight');
@@ -198,7 +196,6 @@
       let isLoopRunning = false;
       let loopInterval;
       let loopDirection = "Forward";
-      btnVideo.disabled = true;
 
       // Get url and query string
       const queryString = window.location.search;
@@ -353,17 +350,12 @@
           btnForward.classList.remove('active');
           btnBackward.classList.remove('active');
           btnStop.classList.remove('active');
-          btnVideo.disabled = true;
           clearInterval(loopInterval);
           isLoopRunning = false;
-          if (isRecording) {
-            mediaRecorder.stop();
-          }
         } else {
           btnForward.classList.add('active');
           btnBackward.classList.remove('active');
           btnStop.classList.remove('active');
-          btnVideo.disabled = false;
           loopDirection = "Forward";
           loopCycle();
         }
@@ -375,17 +367,12 @@
           btnForward.classList.remove('active');
           btnBackward.classList.remove('active');
           btnStop.classList.remove('active');
-          btnVideo.disabled = true;
           clearInterval(loopInterval);
           isLoopRunning = false;
-          if (isRecording) {
-            mediaRecorder.stop();
-          }
         } else {      
           btnForward.classList.remove('active');
           btnBackward.classList.add('active');
           btnStop.classList.remove('active');
-          btnVideo.disabled = false;
           loopDirection = "Backward";
           loopCycle();
         }
@@ -396,13 +383,9 @@
         btnForward.classList.remove('active');
         btnBackward.classList.remove('active');
         btnStop.classList.remove('active');
-        btnVideo.disabled = true;
         if (isLoopRunning) {
           clearInterval(loopInterval);
           isLoopRunning = false;
-        }
-        if (isRecording) {
-          mediaRecorder.stop();
         }
       });
 
@@ -601,90 +584,6 @@
         }
 
       };
-
-      // Set video recording values
-      let isRecording = false;
-      let recordingTimeout;
-      const canvasStream = canvas.captureStream(25); // Capture at 25 frames per second
-      const mediaRecorder = new MediaRecorder(canvasStream, { mimeType: 'video/webm' });
-      const recordingDuration = 30000;
-
-      // Array to store recorded video chunks
-      let recordedChunks = [];
-      mediaRecorder.ondataavailable = function(event) {
-        try {
-          if (event.data.size > 0) {
-            recordedChunks.push(event.data);
-          }
-        } catch (err) {
-          console.error('Error handling data available event:', err);
-        }
-      };
-
-      // When recording stops, create a Blob from the recorded chunks and provide a download link
-      mediaRecorder.onstop = function () {
-        try {
-          btnVideo.classList.remove('active');
-          const blob = new Blob(recordedChunks, { type: 'video/webm' });
-          recordedChunks = [];
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.style.display = 'none';
-          a.href = url;
-          // alert(a.href);
-          a.download = 'spirojs_recording.webm';
-          document.body.appendChild(a);
-          a.click();
-          setTimeout(() => {
-            try {
-              document.body.removeChild(a);
-              window.URL.revokeObjectURL(url);
-            } catch (cleanupError) {
-              console.error('Error during cleanup:', cleanupError);
-            }
-          }, 100);
-          videoToast.show();
-        } catch (err) {
-          console.error('Error during recording stop handling:', err);
-        }
-      };
-
-      // Define actions when video button clicked
-      btnVideo.addEventListener("click", () => {
-        try {
-          isRecording = !isRecording;
-          if (isRecording) {
-            btnVideo.classList.add('active');
-            recordedChunks = [];
-            try {
-              mediaRecorder.start();
-            } catch (startError) {
-              console.error('Error starting media recorder:', startError);
-              isRecording = false;
-              btnVideo.classList.remove('active');
-              return;
-            }
-            recordingTimeout = setTimeout(() => {
-              if (isRecording) {
-                isRecording = false;
-                try {
-                  mediaRecorder.stop();
-                } catch (stopError) {
-                  console.error('Error stopping media recorder after timeout:', stopError);
-                }
-              }
-            }, recordingDuration);
-          } else {
-            try {
-              mediaRecorder.stop();
-            } catch (manualStopError) {
-              console.error('Error stopping media recorder manually:', manualStopError);
-            }
-          }
-        } catch (err) {
-          console.error('Unexpected error during video button click handling:', err);
-        }
-      });
 
       // Original Commodore 64 Code from 1982 (required SuperExpander Cartridge)
       // 1 graphic 2 : b = 0.1
