@@ -132,18 +132,6 @@
       </div>
     </div>
 
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-      <div id="videoToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header">
-          <strong class="me-auto">Video Clip Downloaded!</strong>
-          <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-        <div class="toast-body" id="imageToastBody" style="white-space: pre;">
-          Video clip has been downloaded.
-        </div>
-      </div>
-    </div>
-
     <script>
 
       // Collect initial objects
@@ -182,10 +170,6 @@
       const imageToastDiv = document.getElementById('imageToast');
       const imageToast = new bootstrap.Toast(imageToastDiv, { autohide: true, delay: 4000 });
       const imageToastOutput = document.getElementById('imageToastBody');
-
-      const videoToastDiv = document.getElementById('videoToast');
-      const videoToast = new bootstrap.Toast(videoToastDiv, { autohide: true, delay: 4000 });
-      const videoToastOutput = document.getElementById('videoToastBody');
 
       // Set initial canvas settings
       canvas.width = parentDiv.offsetWidth - 4;
@@ -249,8 +233,8 @@
       plotSpeedInput.value = dblPlotSpeed;
       plotSpeedOutput.textContent = 'Plot Speed: ' + plotSpeedInput.value;
 
-       // Set initial plot speed value
-      let dblPlotSize = 90;
+       // Set initial plot size value
+      let dblPlotSize = 100;
       if (urlParams.has('PlotSize')) {
         let tempValue = urlParams.get('PlotSize');
         if (!isNaN(tempValue)) {
